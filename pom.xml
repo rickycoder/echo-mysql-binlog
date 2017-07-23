@@ -129,7 +129,7 @@
     </build>
     <profiles>
         <profile>
-            <id>jdk-${java.version}</id>
+            <id>jdk-1.8</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
                 <jdk>${java.version}</jdk>
