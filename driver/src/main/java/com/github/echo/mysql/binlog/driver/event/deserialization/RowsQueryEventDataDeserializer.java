@@ -17,14 +17,11 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
 
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
 import com.github.echo.mysql.binlog.driver.event.RowsQueryEventData;
-
 import java.io.IOException;
-
 /**
  * @author <a href="mailto:pprasse@actindo.de">Patrick Prasse</a>
  */
 public class RowsQueryEventDataDeserializer implements EventDataDeserializer<RowsQueryEventData> {
-
     @Override
     public RowsQueryEventData deserialize(ByteArrayInputStream inputStream) throws IOException {
         RowsQueryEventData eventData = new RowsQueryEventData();
@@ -32,5 +29,4 @@ public class RowsQueryEventDataDeserializer implements EventDataDeserializer<Row
         eventData.setQuery(inputStream.readString(inputStream.available()));
         return eventData;
     }
-
 }

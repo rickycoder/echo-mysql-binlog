@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,29 +15,21 @@ package com.github.echo.mysql.binlog.driver.event;
 
 import java.io.Serializable;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class Event implements Serializable {
-
     private EventHeader header;
     private EventData data;
-
     public Event(EventHeader header, EventData data) {
         this.header = header;
         this.data = data;
     }
-
     @SuppressWarnings("unchecked")
     public <T extends EventHeader> T getHeader() {
         return (T) header;
     }
-
     @SuppressWarnings("unchecked")
     public <T extends EventData> T getData() {
         return (T) data;
     }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

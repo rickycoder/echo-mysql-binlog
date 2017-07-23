@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,16 +16,10 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
 import com.github.echo.mysql.binlog.driver.event.EventHeaderV4;
 import com.github.echo.mysql.binlog.driver.event.EventType;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
-
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class EventHeaderV4Deserializer implements EventHeaderDeserializer<EventHeaderV4> {
-
     private static final EventType[] EVENT_TYPES = EventType.values();
-
     @Override
     public EventHeaderV4 deserialize(ByteArrayInputStream inputStream) throws IOException {
         EventHeaderV4 header = new EventHeaderV4();
@@ -39,12 +31,10 @@ public class EventHeaderV4Deserializer implements EventHeaderDeserializer<EventH
         header.setFlags(inputStream.readInteger(2));
         return header;
     }
-
     private static EventType getEventType(int ordinal) throws IOException {
         if (ordinal >= EVENT_TYPES.length) {
             throw new IOException("Unknown event type " + ordinal);
         }
         return EVENT_TYPES[ordinal];
     }
-
 }

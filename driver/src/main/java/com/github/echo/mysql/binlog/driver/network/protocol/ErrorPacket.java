@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,18 +14,12 @@
 package com.github.echo.mysql.binlog.driver.network.protocol;
 
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
-
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class ErrorPacket implements Packet {
-
     private int errorCode;
     private String sqlState;
     private String errorMessage;
-
     public ErrorPacket(byte[] bytes) throws IOException {
         ByteArrayInputStream buffer = new ByteArrayInputStream(bytes);
         this.errorCode = buffer.readInteger(2);
@@ -37,15 +29,12 @@ public class ErrorPacket implements Packet {
         }
         this.errorMessage = buffer.readString(buffer.available());
     }
-
     public int getErrorCode() {
         return errorCode;
     }
-
     public String getSqlState() {
         return sqlState;
     }
-
     public String getErrorMessage() {
         return errorMessage;
     }

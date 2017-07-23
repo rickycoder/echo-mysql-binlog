@@ -18,12 +18,10 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
 import com.github.echo.mysql.binlog.driver.event.GtidEventData;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
 import java.io.IOException;
-
 /**
  * @author <a href="mailto:pprasse@actindo.de">Patrick Prasse</a>
  */
 public class GtidEventDataDeserializer implements EventDataDeserializer<GtidEventData> {
-
     @Override
     public GtidEventData deserialize(ByteArrayInputStream inputStream) throws IOException {
         GtidEventData eventData = new GtidEventData();
@@ -40,7 +38,6 @@ public class GtidEventDataDeserializer implements EventDataDeserializer<GtidEven
         );
         return eventData;
     }
-
     private String byteArrayToHex(byte[] a, int offset, int len) {
         StringBuilder sb = new StringBuilder();
         for (int idx = offset; idx < (offset + len) && idx < a.length; idx++) {
@@ -48,5 +45,4 @@ public class GtidEventDataDeserializer implements EventDataDeserializer<GtidEven
         }
         return sb.toString();
     }
-
 }

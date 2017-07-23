@@ -17,13 +17,8 @@ package com.github.echo.mysql.binlog.driver.network;
 
 import javax.net.ssl.SSLException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class IdentityVerificationException extends SSLException {
-
     public IdentityVerificationException(String message) {
         super(message);
     }
-
 }

@@ -17,25 +17,17 @@ package com.github.echo.mysql.binlog.driver.network.protocol.command;
 
 import com.github.echo.mysql.binlog.driver.io.ByteArrayOutputStream;
 import com.github.echo.mysql.binlog.driver.network.ClientCapabilities;
-
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class SSLRequestCommand implements Command {
-
     private int clientCapabilities;
     private int collation;
-
     public void setClientCapabilities(int clientCapabilities) {
         this.clientCapabilities = clientCapabilities;
     }
-
     public void setCollation(int collation) {
         this.collation = collation;
     }
-
     @Override
     public byte[] toByteArray() throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -53,5 +45,4 @@ public class SSLRequestCommand implements Command {
         }
         return buffer.toByteArray();
     }
-
 }

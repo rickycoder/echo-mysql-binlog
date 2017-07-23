@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,11 +15,7 @@ package com.github.echo.mysql.binlog.driver.event;
 
 import java.io.Serializable;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public interface EventHeader extends Serializable {
-
     long getTimestamp();
     EventType getEventType();
     long getServerId();

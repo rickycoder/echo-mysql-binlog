@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +14,6 @@
 package com.github.echo.mysql.binlog.driver.event;
 
 import java.util.Arrays;
-
 /**
  * @author <a href="https://github.com/stevenczp">Steven Cheng</a>
  */
@@ -28,57 +25,44 @@ public class XAPrepareEventData implements EventData {
     private byte[] data;
     private String gtrid;
     private String bqual;
-
     public boolean isOnePhase() {
         return onePhase;
     }
-
     public void setOnePhase(boolean onePhase) {
         this.onePhase = onePhase;
     }
-
     public int getFormatID() {
         return formatID;
     }
-
     public void setFormatID(int formatID) {
         this.formatID = formatID;
     }
-
     public int getGtridLength() {
         return gtridLength;
     }
-
     public void setGtridLength(int gtridLength) {
         this.gtridLength = gtridLength;
     }
-
     public int getBqualLength() {
         return bqualLength;
     }
-
     public void setBqualLength(int bqualLength) {
         this.bqualLength = bqualLength;
     }
-
     public byte[] getData() {
         return data;
     }
-
     public void setData(byte[] data) {
         this.data = data;
         gtrid = new String(data, 0, gtridLength);
         bqual = new String(data, gtridLength, bqualLength);
     }
-
     public String getGtrid() {
         return gtrid;
     }
-
     public String getBqual() {
         return bqual;
     }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("XAPrepareEventData{");

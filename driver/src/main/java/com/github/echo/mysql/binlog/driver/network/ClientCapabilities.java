@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,12 +14,11 @@
 package com.github.echo.mysql.binlog.driver.network;
 
 /**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
+ *
  * @see <a href="http://dev.mysql.com/doc/internals/en/capability-flags.html#packet-Protocol::CapabilityFlags">
  *      Capability Flags</a>
  */
 public final class ClientCapabilities {
-
     public static final int LONG_PASSWORD = 1; /* new more secure passwords */
     public static final int FOUND_ROWS = 1 << 1; /* found instead of affected rows */
     public static final int LONG_FLAG = 1 << 2; /* get all column flags */
@@ -44,7 +41,6 @@ public final class ClientCapabilities {
     public static final int PLUGIN_AUTH = 1 << 19; /* client supports plugin authentication */
     public static final int SSL_VERIFY_SERVER_CERT = 1 << 30;
     public static final int REMEMBER_OPTIONS = 1 << 31;
-
     private ClientCapabilities() {
     }
 }

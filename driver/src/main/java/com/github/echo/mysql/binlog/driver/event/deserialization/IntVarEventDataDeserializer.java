@@ -17,14 +17,9 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
 
 import com.github.echo.mysql.binlog.driver.event.IntVarEventData;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
-
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class IntVarEventDataDeserializer implements EventDataDeserializer<IntVarEventData> {
-
     @Override
     public IntVarEventData deserialize(ByteArrayInputStream inputStream) throws IOException {
         IntVarEventData event = new IntVarEventData();

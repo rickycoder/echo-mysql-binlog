@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,38 +15,29 @@ package com.github.echo.mysql.binlog.driver.network.protocol.command;
 
 import com.github.echo.mysql.binlog.driver.io.ByteArrayOutputStream;
 import com.github.echo.mysql.binlog.driver.network.ClientCapabilities;
-
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class AuthenticateCommand implements Command {
-
     private String schema;
     private String username;
     private String password;
     private String salt;
     private int clientCapabilities;
     private int collation;
-
     public AuthenticateCommand(String schema, String username, String password, String salt) {
         this.schema = schema;
         this.username = username;
         this.password = password;
         this.salt = salt;
     }
-
     public void setClientCapabilities(int clientCapabilities) {
         this.clientCapabilities = clientCapabilities;
     }
-
     public void setCollation(int collation) {
         this.collation = collation;
     }
-
     @Override
     public byte[] toByteArray() throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -75,7 +64,6 @@ public class AuthenticateCommand implements Command {
         }
         return buffer.toByteArray();
     }
-
     /**
      * see mysql/sql/password.c scramble(...)
      */
@@ -89,14 +77,12 @@ public class AuthenticateCommand implements Command {
         byte[] passwordHash = sha.digest(password.getBytes());
         return xor(passwordHash, sha.digest(union(salt.getBytes(), sha.digest(passwordHash))));
     }
-
     private static byte[] union(byte[] a, byte[] b) {
         byte[] r = new byte[a.length + b.length];
         System.arraycopy(a, 0, r, 0, a.length);
         System.arraycopy(b, 0, r, a.length, b.length);
         return r;
     }
-
     private static byte[] xor(byte[] a, byte[] b) {
         byte[] r = new byte[a.length];
         for (int i = 0; i < r.length; i++) {
@@ -104,5 +90,4 @@ public class AuthenticateCommand implements Command {
         }
         return r;
     }
-
 }

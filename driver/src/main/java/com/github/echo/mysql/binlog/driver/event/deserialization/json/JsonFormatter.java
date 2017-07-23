@@ -16,10 +16,8 @@
 package com.github.echo.mysql.binlog.driver.event.deserialization.json;
 
 import com.github.echo.mysql.binlog.driver.event.deserialization.ColumnType;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
 /**
  * Handle the various actions involved when {@link JsonBinary#parse(byte[], JsonFormatter)} a JSON binary
  * value.
@@ -27,99 +25,84 @@ import java.math.BigInteger;
  * @author <a href="mailto:rhauch@gmail.com">Randall Hauch</a>
  */
 public interface JsonFormatter {
-
     /**
      * Prepare to receive the name-value pairs in a JSON object.
      *
      * @param numElements the number of name-value pairs (or elements)
      */
     void beginObject(int numElements);
-
     /**
      * Prepare to receive the value pairs that in a JSON array.
      *
      * @param numElements the number of array elements
      */
     void beginArray(int numElements);
-
     /**
      * Complete the previously-started JSON object.
      */
     void endObject();
-
     /**
      * Complete the previously-started JSON array.
      */
     void endArray();
-
     /**
      * Receive the name of an element in a JSON object.
      *
      * @param name the element's name; never null
      */
     void name(String name);
-
     /**
      * Receive the string value of an element in a JSON object.
      *
      * @param value the element's value; never null
      */
     void value(String value);
-
     /**
      * Receive the integer value of an element in a JSON object.
      *
      * @param value the element's value
      */
     void value(int value);
-
     /**
      * Receive the long value of an element in a JSON object.
      *
      * @param value the element's value
      */
     void value(long value);
-
     /**
      * Receive the double value of an element in a JSON object.
      *
      * @param value the element's value
      */
     void value(double value);
-
     /**
      * Receive the {@link BigInteger} value of an element in a JSON object.
      *
      * @param value the element's value; never null
      */
     void value(BigInteger value);
-
     /**
      * Receive the {@link BigDecimal} value of an element in a JSON object.
      *
      * @param value the element's value; never null
      */
     void value(BigDecimal value);
-
     /**
      * Receive the boolean value of an element in a JSON object.
      *
      * @param value the element's value
      */
     void value(boolean value);
-
     /**
      * Receive a null value of an element in a JSON object.
      */
     void valueNull();
-
     /**
      * Receive the year value of an element in a JSON object.
      *
      * @param year the year number that makes up the element's value
      */
     void valueYear(int year);
-
     /**
      * Receive the date value of an element in a JSON object.
      *
@@ -128,7 +111,6 @@ public interface JsonFormatter {
      * @param day the day of the month (0-31) in the element's date value
      */
     void valueDate(int year, int month, int day);
-
     /**
      * Receive the date and time value of an element in a JSON object.
      *
@@ -142,7 +124,6 @@ public interface JsonFormatter {
      */
     // checkstyle, please ignore ParameterNumber for the next line
     void valueDatetime(int year, int month, int day, int hour, int min, int sec, int microSeconds);
-
     /**
      * Receive the time value of an element in a JSON object.
      *
@@ -152,7 +133,6 @@ public interface JsonFormatter {
      * @param microSeconds the number of microseconds in the element's time value
      */
     void valueTime(int hour, int min, int sec, int microSeconds);
-
     /**
      * Receive the timestamp value of an element in a JSON object.
      *
@@ -160,7 +140,6 @@ public interface JsonFormatter {
      * @param microSeconds the number of microseconds in the element's time value
      */
     void valueTimestamp(long secondsPastEpoch, int microSeconds);
-
     /**
      * Receive an opaque value of an element in a JSON object.
      *
@@ -168,10 +147,8 @@ public interface JsonFormatter {
      * @param value the binary representation for the element's value
      */
     void valueOpaque(ColumnType type, byte[] value);
-
     /**
      * Called after an entry signaling that another entry will be signaled.
      */
     void nextEntry();
-
 }

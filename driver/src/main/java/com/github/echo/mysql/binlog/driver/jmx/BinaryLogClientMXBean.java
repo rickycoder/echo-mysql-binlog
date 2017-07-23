@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,11 +16,7 @@ package com.github.echo.mysql.binlog.driver.jmx;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public interface BinaryLogClientMXBean {
-
     String getBinlogFilename();
     void setBinlogFilename(String binlogFilename);
     long getBinlogPosition();
@@ -30,5 +24,4 @@ public interface BinaryLogClientMXBean {
     void connect(long timeoutInMilliseconds) throws IOException, TimeoutException;
     boolean isConnected();
     void disconnect() throws IOException;
-
 }

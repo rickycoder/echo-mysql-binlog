@@ -17,11 +17,7 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
 
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class MissingTableMapEventException extends IOException {
-
     public MissingTableMapEventException(String message) {
         super(message);
     }

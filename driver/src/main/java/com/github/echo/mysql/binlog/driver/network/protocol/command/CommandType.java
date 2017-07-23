@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,14 +14,12 @@
 package com.github.echo.mysql.binlog.driver.network.protocol.command;
 
 import com.github.echo.mysql.binlog.driver.network.ClientCapabilities;
-
 /**
  * @see <a href="http://dev.mysql.com/doc/internals/en/text-protocol.html">Text Protocol</a> for the original
  * documentation.
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
+ *
  */
 public enum CommandType {
-
     /**
      * Internal server command.
      */
@@ -149,5 +145,4 @@ public enum CommandType {
      * Used to request the binary log network stream based on a GTID.
      */
     BINLOG_DUMP_GTID
-
 }

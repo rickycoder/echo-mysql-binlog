@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,57 +13,43 @@
  */
 package com.github.echo.mysql.binlog.driver.event;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
-public class QueryEventData implements EventData {
 
+public class QueryEventData implements EventData {
     private long threadId;
     private long executionTime;
     private int errorCode;
     private String database;
     private String sql;
-
     public long getThreadId() {
         return threadId;
     }
-
     public void setThreadId(long threadId) {
         this.threadId = threadId;
     }
-
     public long getExecutionTime() {
         return executionTime;
     }
-
     public void setExecutionTime(long executionTime) {
         this.executionTime = executionTime;
     }
-
     public int getErrorCode() {
         return errorCode;
     }
-
     public void setErrorCode(int errorCode) {
         this.errorCode = errorCode;
     }
-
     public String getDatabase() {
         return database;
     }
-
     public void setDatabase(String database) {
         this.database = database;
     }
-
     public String getSql() {
         return sql;
     }
-
     public void setSql(String sql) {
         this.sql = sql;
     }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

@@ -17,27 +17,20 @@ package com.github.echo.mysql.binlog.driver.network.protocol.command;
 
 import com.github.echo.mysql.binlog.driver.GtidSet;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayOutputStream;
-
 import java.io.IOException;
 import java.util.Collection;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class DumpBinaryLogGtidCommand implements Command {
-
     private long serverId;
     private String binlogFilename;
     private long binlogPosition;
     private GtidSet gtidSet;
-
     public DumpBinaryLogGtidCommand(long serverId, String binlogFilename, long binlogPosition, GtidSet gtidSet) {
         this.serverId = serverId;
         this.binlogFilename = binlogFilename;
         this.binlogPosition = binlogPosition;
         this.gtidSet = gtidSet;
     }
-
     @Override
     public byte[] toByteArray() throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -66,7 +59,6 @@ public class DumpBinaryLogGtidCommand implements Command {
         }
         return buffer.toByteArray();
     }
-
     private static byte[] hexToByteArray(String uuid) {
         byte[] b = new byte[uuid.length() / 2];
         for (int i = 0, j = 0; j < uuid.length(); j += 2) {
@@ -74,5 +66,4 @@ public class DumpBinaryLogGtidCommand implements Command {
         }
         return b;
     }
-
 }

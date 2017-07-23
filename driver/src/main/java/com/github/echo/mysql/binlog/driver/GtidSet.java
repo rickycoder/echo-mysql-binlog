@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 /**
  * GTID set as described in <a href="https://dev.mysql.com/doc/refman/5.6/en/replication-gtids-concepts.html">GTID
  * Concepts</a> of MySQL 5.6 Reference Manual.
@@ -34,12 +33,10 @@ import java.util.Map;
  * interval: n[-n], (n >= 1)
  * </pre>
  *
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
+ *
  */
 public class GtidSet {
-
     private final Map<String, UUIDSet> map = new LinkedHashMap<String, UUIDSet>();
-
     /**
      * @param gtidSet gtid set comprised of closed intervals (like MySQL's executed_gtid_set).
      */
@@ -65,7 +62,6 @@ public class GtidSet {
             map.put(sourceId, new UUIDSet(sourceId, intervals));
         }
     }
-
     /**
      * Get an immutable collection of the {@link UUIDSet range of GTIDs for a single server}.
      * @return the {@link UUIDSet GTID ranges for each server}; never null
@@ -73,7 +69,6 @@ public class GtidSet {
     public Collection<UUIDSet> getUUIDSets() {
         return Collections.unmodifiableCollection(map.values());
     }
-
     /**
      * Find the {@link UUIDSet} for the server with the specified UUID.
      * @param uuid the UUID of the server
@@ -82,7 +77,6 @@ public class GtidSet {
     public UUIDSet getUUIDSet(String uuid) {
         return map.get(uuid);
     }
-
     /**
      * Add or replace the UUIDSet
      * @param uuidSet UUIDSet to be added
@@ -92,7 +86,6 @@ public class GtidSet {
     public UUIDSet putUUIDSet(UUIDSet uuidSet) {
         return map.put(uuidSet.getUUID(), uuidSet);
     }
-
     /**
      * @param gtid GTID ("source_id:transaction_id")
      * @return whether or not gtid was added to the set (false if it was already there)
@@ -107,7 +100,6 @@ public class GtidSet {
         }
         return uuidSet.add(transactionId);
     }
-
     /**
      * Determine if the GTIDs represented by this object are contained completely within the supplied set of GTIDs.
      * Note that if two {@link GtidSet}s are equal, then they both are subsets of the other.
@@ -133,12 +125,10 @@ public class GtidSet {
         }
         return true;
     }
-
     @Override
     public int hashCode() {
         return map.keySet().hashCode();
     }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -150,7 +140,6 @@ public class GtidSet {
         }
         return false;
     }
-
     @Override
     public String toString() {
         List<String> gtids = new ArrayList<String>();
@@ -159,7 +148,6 @@ public class GtidSet {
         }
         return join(gtids, ",");
     }
-
     private static String join(Collection<?> o, String delimiter) {
         if (o.isEmpty()) {
             return "";
@@ -170,16 +158,13 @@ public class GtidSet {
         }
         return sb.substring(0, sb.length() - delimiter.length());
     }
-
     /**
      * A range of GTIDs for a single server with a specific UUID.
      * @see GtidSet
      */
     public static final class UUIDSet {
-
         private String uuid;
         private List<Interval> intervals;
-
         public UUIDSet(String uuid, List<Interval> intervals) {
             this.uuid = uuid;
             this.intervals = intervals;
@@ -187,7 +172,6 @@ public class GtidSet {
                 joinAdjacentIntervals(0);
             }
         }
-
         private boolean add(long transactionId) {
             int index = findInterval(transactionId);
             boolean addedToExisting = false;
@@ -213,7 +197,6 @@ public class GtidSet {
             }
             return true;
         }
-
         /**
          * Collapses intervals like a-(b-1):b-c into a-c (only in index+-1 range).
          */
@@ -226,7 +209,6 @@ public class GtidSet {
                 }
             }
         }
-
         /**
          * @return index which is either a pointer to the interval containing v or a position at which v can be added
          */
@@ -249,7 +231,6 @@ public class GtidSet {
             }
             return p;
         }
-
         /**
          * Get the UUID for the server that generated the GTIDs.
          * @return the server's UUID; never null
@@ -257,7 +238,6 @@ public class GtidSet {
         public String getUUID() {
             return uuid;
         }
-
         /**
          * Get the intervals of transaction numbers.
          * @return the immutable transaction intervals; never null
@@ -265,7 +245,6 @@ public class GtidSet {
         public List<Interval> getIntervals() {
             return Collections.unmodifiableList(intervals);
         }
-
         /**
          * Determine if the set of transaction numbers from this server is completely within the set of transaction
          * numbers from the set of transaction numbers in the supplied set.
@@ -302,12 +281,10 @@ public class GtidSet {
             }
             return true;
         }
-
         @Override
         public int hashCode() {
             return uuid.hashCode();
         }
-
         @Override
         public boolean equals(Object obj) {
             if (obj == this) {
@@ -320,7 +297,6 @@ public class GtidSet {
             }
             return super.equals(obj);
         }
-
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
@@ -339,21 +315,17 @@ public class GtidSet {
             return sb.toString();
         }
     }
-
     /**
      * An interval of contiguous transaction identifiers.
      * @see GtidSet
      */
     public static final class Interval implements Comparable<Interval> {
-
         private long start;
         private long end;
-
         public Interval(long start, long end) {
             this.start = start;
             this.end = end;
         }
-
         /**
          * Get the starting transaction number in this interval.
          * @return this interval's first transaction number
@@ -361,7 +333,6 @@ public class GtidSet {
         public long getStart() {
             return start;
         }
-
         /**
          * Get the ending transaction number in this interval.
          * @return this interval's last transaction number
@@ -369,7 +340,6 @@ public class GtidSet {
         public long getEnd() {
             return end;
         }
-
         /**
          * Determine if this interval is completely within the supplied interval.
          * @param other the interval to compare with
@@ -386,12 +356,10 @@ public class GtidSet {
             }
             return this.getStart() >= other.getStart() && this.getEnd() <= other.getEnd();
         }
-
         @Override
         public int hashCode() {
             return (int) getStart();
         }
-
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -403,17 +371,14 @@ public class GtidSet {
             }
             return false;
         }
-
         @Override
         public String toString() {
             return start + "-" + end;
         }
-
         @Override
         public int compareTo(Interval o) {
             return saturatedCast(this.start - o.start);
         }
-
         private static int saturatedCast(long value) {
             if (value > Integer.MAX_VALUE) {
                 return Integer.MAX_VALUE;
@@ -424,5 +389,4 @@ public class GtidSet {
             return (int) value;
         }
     }
-
 }

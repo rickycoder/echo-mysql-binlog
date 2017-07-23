@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,14 +14,9 @@
 package com.github.echo.mysql.binlog.driver.network.protocol;
 
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
-
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class GreetingPacket implements Packet {
-
     private int protocolVersion;
     private String serverVersion;
     private long threadId;
@@ -32,7 +25,6 @@ public class GreetingPacket implements Packet {
     private int serverCollation;
     private int serverStatus;
     private String pluginProvidedData;
-
     public GreetingPacket(byte[] bytes) throws IOException {
         ByteArrayInputStream buffer = new ByteArrayInputStream(bytes);
         this.protocolVersion = buffer.readInteger(1);
@@ -48,37 +40,28 @@ public class GreetingPacket implements Packet {
             this.pluginProvidedData = buffer.readZeroTerminatedString();
         }
     }
-
     public int getProtocolVersion() {
         return protocolVersion;
     }
-
     public String getServerVersion() {
         return serverVersion;
     }
-
     public String getScramble() {
         return scramble;
     }
-
     public long getThreadId() {
         return threadId;
     }
-
     public int getServerStatus() {
         return serverStatus;
     }
-
     public int getServerCapabilities() {
         return serverCapabilities;
     }
-
     public String getPluginProvidedData() {
         return pluginProvidedData;
     }
-
     public int getServerCollation() {
         return serverCollation;
     }
-
 }

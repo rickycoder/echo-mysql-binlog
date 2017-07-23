@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,11 +13,8 @@
  */
 package com.github.echo.mysql.binlog.driver.network.protocol;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
-public interface Packet {
 
+public interface Packet {
     // https://dev.mysql.com/doc/internals/en/sending-more-than-16mbyte.html
     int MAX_LENGTH = 16777215;
 }

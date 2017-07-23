@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,48 +14,36 @@
 package com.github.echo.mysql.binlog.driver.event;
 
 import com.github.echo.mysql.binlog.driver.event.deserialization.AbstractRowsEventDataDeserializer;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class WriteRowsEventData implements EventData {
-
     private long tableId;
     private BitSet includedColumns;
     /**
      * @see AbstractRowsEventDataDeserializer
      */
     private List<Serializable[]> rows;
-
     public long getTableId() {
         return tableId;
     }
-
     public void setTableId(long tableId) {
         this.tableId = tableId;
     }
-
     public BitSet getIncludedColumns() {
         return includedColumns;
     }
-
     public void setIncludedColumns(BitSet includedColumns) {
         this.includedColumns = includedColumns;
     }
-
     public List<Serializable[]> getRows() {
         return rows;
     }
-
     public void setRows(List<Serializable[]> rows) {
         this.rows = rows;
     }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,21 +14,14 @@
 package com.github.echo.mysql.binlog.driver.event.deserialization;
 
 import com.github.echo.mysql.binlog.driver.event.EventHeader;
-
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class EventDataDeserializationException extends IOException {
-
     private EventHeader eventHeader;
-
     public EventDataDeserializationException(EventHeader eventHeader, Throwable cause) {
         super("Failed to deserialize data of " + eventHeader, cause);
         this.eventHeader = eventHeader;
     }
-
     public EventHeader getEventHeader() {
         return eventHeader;
     }

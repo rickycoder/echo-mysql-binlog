@@ -16,17 +16,13 @@
 package com.github.echo.mysql.binlog.driver.event.deserialization;
 
 import static java.lang.String.format;
-
 import java.io.IOException;
-
 import com.github.echo.mysql.binlog.driver.event.PreviousGtidSetEventData;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
-
 /**
  * @author <a href="https://github.com/jolivares">Juan Olivares</a>
  */
 public class PreviousGtidSetDeserializer implements EventDataDeserializer<PreviousGtidSetEventData> {
-
     @Override
     public PreviousGtidSetEventData deserialize(
             ByteArrayInputStream inputStream) throws IOException {
@@ -34,7 +30,6 @@ public class PreviousGtidSetDeserializer implements EventDataDeserializer<Previo
         String[] gtids = new String[nUuids];
         for (int i = 0; i < nUuids; i++) {
             String uuid = formatUUID(inputStream.read(16));
-
             int nIntervals = inputStream.readInteger(8);
             String[] intervals = new String[nIntervals];
             for (int j = 0; j < nIntervals; j++) {
@@ -42,12 +37,10 @@ public class PreviousGtidSetDeserializer implements EventDataDeserializer<Previo
                 long end = inputStream.readLong(8);
                 intervals[j] = start + "-" + (end - 1);
             }
-
             gtids[i] = format("%s:%s", uuid, join(intervals, ":"));
         }
         return new PreviousGtidSetEventData(join(gtids, ","));
     }
-
     private String formatUUID(byte[] bytes) {
         return format("%s-%s-%s-%s-%s",
             byteArrayToHex(bytes, 0, 4),
@@ -56,7 +49,6 @@ public class PreviousGtidSetDeserializer implements EventDataDeserializer<Previo
             byteArrayToHex(bytes, 8, 2),
             byteArrayToHex(bytes, 10, 6));
     }
-
     private static String byteArrayToHex(byte[] a, int offset, int len) {
         StringBuilder sb = new StringBuilder();
         for (int idx = offset; idx < (offset + len) && idx < a.length; idx++) {
@@ -64,7 +56,6 @@ public class PreviousGtidSetDeserializer implements EventDataDeserializer<Previo
         }
         return sb.toString();
     }
-
     private static String join(String[] values, String separator) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < values.length; i++) {
@@ -75,5 +66,4 @@ public class PreviousGtidSetDeserializer implements EventDataDeserializer<Previo
         }
         return sb.toString();
     }
-
 }

@@ -22,24 +22,17 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.security.GeneralSecurityException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class DefaultSSLSocketFactory implements SSLSocketFactory {
-
     private final String protocol;
-
     public DefaultSSLSocketFactory() {
         this("TLSv1");
     }
-
     /**
      * @param protocol TLSv1, TLSv1.1 or TLSv1.2 (the last two require JDK 7+)
      */
     public DefaultSSLSocketFactory(String protocol) {
         this.protocol = protocol;
     }
-
     @Override
     public SSLSocket createSocket(Socket socket) throws SocketException {
         SSLContext sc;
@@ -56,9 +49,7 @@ public class DefaultSSLSocketFactory implements SSLSocketFactory {
             throw new SocketException(e.getMessage());
         }
     }
-
     protected void initSSLContext(SSLContext sc) throws GeneralSecurityException {
         sc.init(null, null, null);
     }
-
 }

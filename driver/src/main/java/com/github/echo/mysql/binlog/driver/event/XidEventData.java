@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,21 +13,15 @@
  */
 package com.github.echo.mysql.binlog.driver.event;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
+
 public class XidEventData implements EventData {
-
     private long xid;
-
     public long getXid() {
         return xid;
     }
-
     public void setXid(long xid) {
         this.xid = xid;
     }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

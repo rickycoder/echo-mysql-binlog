@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,14 +15,9 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
 
 import com.github.echo.mysql.binlog.driver.event.TableMapEventData;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
-
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class TableMapEventDataDeserializer implements EventDataDeserializer<TableMapEventData> {
-
     @Override
     public TableMapEventData deserialize(ByteArrayInputStream inputStream) throws IOException {
         TableMapEventData eventData = new TableMapEventData();
@@ -40,7 +33,6 @@ public class TableMapEventDataDeserializer implements EventDataDeserializer<Tabl
         eventData.setColumnNullability(inputStream.readBitSet(numberOfColumns, true));
         return eventData;
     }
-
     private int[] readMetadata(ByteArrayInputStream inputStream, byte[] columnTypes) throws IOException {
         int[] metadata = new int[columnTypes.length];
         for (int i = 0; i < columnTypes.length; i++) {
@@ -73,7 +65,6 @@ public class TableMapEventDataDeserializer implements EventDataDeserializer<Tabl
         }
         return metadata;
     }
-
     private static int bigEndianInteger(byte[] bytes, int offset, int length) {
         int result = 0;
         for (int i = offset; i < (offset + length); i++) {
@@ -82,5 +73,4 @@ public class TableMapEventDataDeserializer implements EventDataDeserializer<Tabl
         }
         return result;
     }
-
 }

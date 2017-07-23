@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,20 +14,13 @@
 package com.github.echo.mysql.binlog.driver.network.protocol.command;
 
 import com.github.echo.mysql.binlog.driver.io.ByteArrayOutputStream;
-
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class QueryCommand implements Command {
-
     private String sql;
-
     public QueryCommand(String sql) {
         this.sql = sql;
     }
-
     @Override
     public byte[] toByteArray() throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -37,5 +28,4 @@ public class QueryCommand implements Command {
         buffer.writeString(this.sql);
         return buffer.toByteArray();
     }
-
 }

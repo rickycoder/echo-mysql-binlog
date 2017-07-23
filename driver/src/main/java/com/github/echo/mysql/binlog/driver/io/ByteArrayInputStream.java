@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,23 +18,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.BitSet;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class ByteArrayInputStream extends InputStream {
-
     private InputStream inputStream;
     private Integer peek;
     private int blockLength = -1;
-
     public ByteArrayInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
     }
-
     public ByteArrayInputStream(byte[] bytes) {
         this(new java.io.ByteArrayInputStream(bytes));
     }
-
     /**
      * Read int written in little-endian format.
      */
@@ -47,7 +38,6 @@ public class ByteArrayInputStream extends InputStream {
         }
         return result;
     }
-
     /**
      * Read long written in little-endian format.
      */
@@ -58,21 +48,18 @@ public class ByteArrayInputStream extends InputStream {
         }
         return result;
     }
-
     /**
      * Read fixed length string.
      */
     public String readString(int length) throws IOException {
         return new String(read(length));
     }
-
     /**
      * Read variable-length string. Preceding packed integer indicates the length of the string.
      */
     public String readLengthEncodedString() throws IOException {
         return readString(readPackedInteger());
     }
-
     /**
      * Read variable-length string. End is indicated by 0x00 byte.
      */
@@ -83,13 +70,11 @@ public class ByteArrayInputStream extends InputStream {
         }
         return new String(s.toByteArray());
     }
-
     public byte[] read(int length) throws IOException {
         byte[] bytes = new byte[length];
         fill(bytes, 0, length);
         return bytes;
     }
-
     public void fill(byte[] bytes, int offset, int length) throws IOException {
         int remaining = length;
         while (remaining != 0) {
@@ -100,7 +85,6 @@ public class ByteArrayInputStream extends InputStream {
             remaining -= read;
         }
     }
-
     public BitSet readBitSet(int length, boolean bigEndian) throws IOException {
         // according to MySQL internals the amount of storage required for N columns is INT((N+7)/8) bytes
         byte[] bytes = read((length + 7) >> 3);
@@ -113,7 +97,6 @@ public class ByteArrayInputStream extends InputStream {
         }
         return result;
     }
-
     private byte[] reverse(byte[] bytes) {
         for (int i = 0, length = bytes.length >> 1; i < length; i++) {
             int j = bytes.length - 1 - i;
@@ -123,7 +106,6 @@ public class ByteArrayInputStream extends InputStream {
         }
         return bytes;
     }
-
     /**
      * @see #readPackedNumber()
      */
@@ -137,7 +119,6 @@ public class ByteArrayInputStream extends InputStream {
         }
         return number.intValue();
     }
-
     /**
      * Format (first-byte-based):<br/>
      * 0-250 - The first byte is the number (in the range 0-250). No additional bytes are used.<br/>
@@ -161,7 +142,6 @@ public class ByteArrayInputStream extends InputStream {
         }
         throw new IOException("Unexpected packed number byte " + b);
     }
-
     @Override
     public int available() throws IOException {
         if (blockLength != -1) {
@@ -169,14 +149,12 @@ public class ByteArrayInputStream extends InputStream {
         }
         return inputStream.available();
     }
-
     public int peek() throws IOException {
         if (peek == null) {
             peek = readWithinBlockBoundaries();
         }
         return peek;
     }
-
     @Override
     public int read() throws IOException {
         int result;
@@ -191,7 +169,6 @@ public class ByteArrayInputStream extends InputStream {
         }
         return result;
     }
-
     private int readWithinBlockBoundaries() throws IOException {
         if (blockLength != -1) {
             if (blockLength == 0) {
@@ -201,21 +178,17 @@ public class ByteArrayInputStream extends InputStream {
         }
         return inputStream.read();
     }
-
     @Override
     public void close() throws IOException {
         inputStream.close();
     }
-
     public void enterBlock(int length) {
         this.blockLength = length < -1 ? -1 : length;
     }
-
     public void skipToTheEndOfTheBlock() throws IOException {
         if (blockLength != -1) {
             skip(blockLength);
             blockLength = -1;
         }
     }
-
 }

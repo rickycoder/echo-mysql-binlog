@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,9 +15,7 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
 
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
 import com.github.echo.mysql.binlog.driver.event.XAPrepareEventData;
-
 import java.io.IOException;
-
 /**
  * https://github.com/mysql/mysql-server/blob/5.7/libbinlogevents/src/control_events.cpp#L590
  * <p>
@@ -41,7 +37,6 @@ public class XAPrepareEventDataDeserializer implements EventDataDeserializer<XAP
         xaPrepareEventData.setBqualLength(inputStream.readInteger(4));
         xaPrepareEventData.setData(inputStream.read(
             xaPrepareEventData.getGtridLength() + xaPrepareEventData.getBqualLength()));
-
         return xaPrepareEventData;
     }
 }

@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,66 +15,49 @@ package com.github.echo.mysql.binlog.driver.event;
 
 import java.util.BitSet;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class TableMapEventData implements EventData {
-
     private long tableId;
     private String database;
     private String table;
     private byte[] columnTypes;
     private int[] columnMetadata;
     private BitSet columnNullability;
-
     public long getTableId() {
         return tableId;
     }
-
     public void setTableId(long tableId) {
         this.tableId = tableId;
     }
-
     public String getDatabase() {
         return database;
     }
-
     public void setDatabase(String database) {
         this.database = database;
     }
-
     public String getTable() {
         return table;
     }
-
     public void setTable(String table) {
         this.table = table;
     }
-
     public byte[] getColumnTypes() {
         return columnTypes;
     }
-
     public void setColumnTypes(byte[] columnTypes) {
         this.columnTypes = columnTypes;
     }
-
     public int[] getColumnMetadata() {
         return columnMetadata;
     }
-
     public void setColumnMetadata(int[] columnMetadata) {
         this.columnMetadata = columnMetadata;
     }
-
     public BitSet getColumnNullability() {
         return columnNullability;
     }
-
     public void setColumnNullability(BitSet columnNullability) {
         this.columnNullability = columnNullability;
     }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

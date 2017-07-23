@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,11 +16,7 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public enum ColumnType {
-
     DECIMAL(0),
     TINY(1),
     SHORT(2),
@@ -56,28 +50,21 @@ public enum ColumnType {
     VAR_STRING(253),
     STRING(254),
     GEOMETRY(255);
-
     private int code;
-
     private ColumnType(int code) {
         this.code = code;
     }
-
     public int getCode() {
         return code;
     }
-
     private static final Map<Integer, ColumnType> INDEX_BY_CODE;
-
     static {
         INDEX_BY_CODE = new HashMap<Integer, ColumnType>();
         for (ColumnType columnType : values()) {
             INDEX_BY_CODE.put(columnType.code, columnType);
         }
     }
-
     public static ColumnType byCode(int code) {
         return INDEX_BY_CODE.get(code);
     }
-
 }

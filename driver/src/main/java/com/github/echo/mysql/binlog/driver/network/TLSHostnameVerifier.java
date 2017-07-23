@@ -16,7 +16,6 @@
 package com.github.echo.mysql.binlog.driver.network;
 
 import sun.security.util.HostnameChecker;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -24,11 +23,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class TLSHostnameVerifier implements HostnameVerifier {
-
     public boolean verify(String hostname, SSLSession session) {
         HostnameChecker checker = HostnameChecker.getInstance(HostnameChecker.TYPE_TLS);
         try {
@@ -45,5 +40,4 @@ public class TLSHostnameVerifier implements HostnameVerifier {
         }
         return false;
     }
-
 }

@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,20 +18,15 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
  * <a href="https://dev.mysql.com/doc/refman/5.6/en/replication-options-binary-log.html#option_mysqld_binlog-checksum">
  *     MySQL --binlog-checksum option
  * </a>
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
+ *
  */
 public enum ChecksumType {
-
     NONE(0), CRC32(4);
-
     private int length;
-
     private ChecksumType(int length) {
         this.length = length;
     }
-
     public int getLength() {
         return length;
     }
-
 }

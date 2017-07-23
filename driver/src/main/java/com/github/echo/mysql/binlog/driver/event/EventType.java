@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,10 +16,9 @@ package com.github.echo.mysql.binlog.driver.event;
 /**
  * @see <a href="https://dev.mysql.com/doc/internals/en/event-meanings.html">Event Meanings</a> for the original
  * documentation.
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
+ *
  */
 public enum EventType {
-
     /**
      * Events of this event type should never occur. Not written to a binary log.
      */
@@ -193,29 +190,24 @@ public enum EventType {
      * Prepared XA transaction terminal event similar to XID except that it is specific to XA transaction.
      */
     XA_PREPARE;
-
     public static boolean isRowMutation(EventType eventType) {
         return EventType.isWrite(eventType) ||
                EventType.isUpdate(eventType) ||
                EventType.isDelete(eventType);
     }
-
     public static boolean isWrite(EventType eventType) {
         return eventType == PRE_GA_WRITE_ROWS ||
                eventType == WRITE_ROWS ||
                eventType == EXT_WRITE_ROWS;
     }
-
     public static boolean isUpdate(EventType eventType) {
         return eventType == PRE_GA_UPDATE_ROWS ||
                eventType == UPDATE_ROWS ||
                eventType == EXT_UPDATE_ROWS;
     }
-
     public static boolean isDelete(EventType eventType) {
         return eventType == PRE_GA_DELETE_ROWS ||
                eventType == DELETE_ROWS ||
                eventType == EXT_DELETE_ROWS;
     }
-
 }

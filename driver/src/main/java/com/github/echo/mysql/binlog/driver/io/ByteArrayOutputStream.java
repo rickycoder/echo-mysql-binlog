@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,21 +16,14 @@ package com.github.echo.mysql.binlog.driver.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class ByteArrayOutputStream extends OutputStream {
-
     private OutputStream outputStream;
-
     public ByteArrayOutputStream() {
         this(new java.io.ByteArrayOutputStream());
     }
-
     public ByteArrayOutputStream(OutputStream outputStream) {
         this.outputStream = outputStream;
     }
-
     /**
      * Write int in little-endian format.
      */
@@ -41,7 +32,6 @@ public class ByteArrayOutputStream extends OutputStream {
             write(0x000000FF & (value >>> (i << 3)));
         }
     }
-
     /**
      * Write long in little-endian format.
      */
@@ -50,11 +40,9 @@ public class ByteArrayOutputStream extends OutputStream {
             write((int) (0x00000000000000FF & (value >>> (i << 3))));
         }
     }
-
     public void writeString(String value) throws IOException {
         write(value.getBytes());
     }
-
     /**
      * @see ByteArrayInputStream#readZeroTerminatedString()
      */
@@ -62,12 +50,10 @@ public class ByteArrayOutputStream extends OutputStream {
         write(value.getBytes());
         write(0);
     }
-
     @Override
     public void write(int b) throws IOException {
         outputStream.write(b);
     }
-
     public byte[] toByteArray() {
         // todo: whole approach feels wrong
         if (outputStream instanceof java.io.ByteArrayOutputStream) {
@@ -75,16 +61,12 @@ public class ByteArrayOutputStream extends OutputStream {
         }
         return new byte[0];
     }
-
     @Override
     public void flush() throws IOException {
         outputStream.flush();
     }
-
     @Override
     public void close() throws IOException {
         outputStream.close();
     }
-
 }
-

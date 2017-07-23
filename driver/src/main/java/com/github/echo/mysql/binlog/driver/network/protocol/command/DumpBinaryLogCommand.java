@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,24 +14,17 @@
 package com.github.echo.mysql.binlog.driver.network.protocol.command;
 
 import com.github.echo.mysql.binlog.driver.io.ByteArrayOutputStream;
-
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class DumpBinaryLogCommand implements Command {
-
     private long serverId;
     private String binlogFilename;
     private long binlogPosition;
-
     public DumpBinaryLogCommand(long serverId, String binlogFilename, long binlogPosition) {
         this.serverId = serverId;
         this.binlogFilename = binlogFilename;
         this.binlogPosition = binlogPosition;
     }
-
     @Override
     public byte[] toByteArray() throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -44,5 +35,4 @@ public class DumpBinaryLogCommand implements Command {
         buffer.writeString(this.binlogFilename);
         return buffer.toByteArray();
     }
-
 }

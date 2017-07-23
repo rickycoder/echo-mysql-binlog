@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +16,6 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
 import com.github.echo.mysql.binlog.driver.event.TableMapEventData;
 import com.github.echo.mysql.binlog.driver.event.UpdateRowsEventData;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.AbstractMap;
@@ -27,22 +24,15 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
 public class UpdateRowsEventDataDeserializer extends AbstractRowsEventDataDeserializer<UpdateRowsEventData> {
-
     private boolean mayContainExtraInformation;
-
     public UpdateRowsEventDataDeserializer(Map<Long, TableMapEventData> tableMapEventByTableId) {
         super(tableMapEventByTableId);
     }
-
     public UpdateRowsEventDataDeserializer setMayContainExtraInformation(boolean mayContainExtraInformation) {
         this.mayContainExtraInformation = mayContainExtraInformation;
         return this;
     }
-
     @Override
     public UpdateRowsEventData deserialize(ByteArrayInputStream inputStream) throws IOException {
         UpdateRowsEventData eventData = new UpdateRowsEventData();
@@ -58,7 +48,6 @@ public class UpdateRowsEventDataDeserializer extends AbstractRowsEventDataDeseri
         eventData.setRows(deserializeRows(eventData, inputStream));
         return eventData;
     }
-
     private List<Map.Entry<Serializable[], Serializable[]>> deserializeRows(UpdateRowsEventData eventData,
             ByteArrayInputStream inputStream) throws IOException {
         long tableId = eventData.getTableId();
@@ -74,5 +63,4 @@ public class UpdateRowsEventDataDeserializer extends AbstractRowsEventDataDeseri
         }
         return rows;
     }
-
 }

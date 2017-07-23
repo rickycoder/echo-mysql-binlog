@@ -17,7 +17,6 @@ package com.github.echo.mysql.binlog.driver.event.deserialization.json;
 
 import java.util.HashMap;
 import java.util.Map;
-
 /**
  * The set of values that can be used within a MySQL JSON value.
  * <p>
@@ -45,7 +44,6 @@ import java.util.Map;
  * @author <a href="mailto:rhauch@gmail.com">Randall Hauch</a>
  */
 public enum ValueType {
-
     SMALL_DOCUMENT(0x00),
     LARGE_DOCUMENT(0x01),
     SMALL_ARRAY(0x02),
@@ -60,28 +58,21 @@ public enum ValueType {
     DOUBLE(0x0b),
     STRING(0x0c),
     CUSTOM(0x0f);
-
     private final int code;
-
     ValueType(int code) {
         this.code = code;
     }
-
     public int getCode() {
         return this.code;
     }
-
     private static final Map<Integer, ValueType> TYPE_BY_CODE;
-
     static {
         TYPE_BY_CODE = new HashMap<Integer, ValueType>();
         for (ValueType type : values()) {
             TYPE_BY_CODE.put(type.code, type);
         }
     }
-
     public static ValueType byCode(int code) {
         return TYPE_BY_CODE.get(code);
     }
-
 }

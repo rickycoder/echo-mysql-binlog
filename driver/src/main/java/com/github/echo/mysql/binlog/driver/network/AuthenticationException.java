@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,15 +13,11 @@
  */
 package com.github.echo.mysql.binlog.driver.network;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
-public class AuthenticationException extends ServerException {
 
+public class AuthenticationException extends ServerException {
     public AuthenticationException(String message, int errorCode, String sqlState) {
         super(message, errorCode, sqlState);
     }
-
     public AuthenticationException(String message) {
         super(message, 0, "HY000");
     }

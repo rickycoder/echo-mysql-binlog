@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,30 +13,22 @@
  */
 package com.github.echo.mysql.binlog.driver.event;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
-public class RotateEventData implements EventData {
 
+public class RotateEventData implements EventData {
     private String binlogFilename;
     private long binlogPosition;
-
     public String getBinlogFilename() {
         return binlogFilename;
     }
-
     public void setBinlogFilename(String binlogFilename) {
         this.binlogFilename = binlogFilename;
     }
-
     public long getBinlogPosition() {
         return binlogPosition;
     }
-
     public void setBinlogPosition(long binlogPosition) {
         this.binlogPosition = binlogPosition;
     }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

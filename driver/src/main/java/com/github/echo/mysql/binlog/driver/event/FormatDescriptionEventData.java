@@ -1,6 +1,4 @@
 /*
- * Copyright 2013 Stanley Shyiko
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,39 +13,29 @@
  */
 package com.github.echo.mysql.binlog.driver.event;
 
-/**
- * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
- */
-public class FormatDescriptionEventData implements EventData {
 
+public class FormatDescriptionEventData implements EventData {
     private int binlogVersion;
     private String serverVersion;
     private int headerLength;
-
     public int getBinlogVersion() {
         return binlogVersion;
     }
-
     public void setBinlogVersion(int binlogVersion) {
         this.binlogVersion = binlogVersion;
     }
-
     public String getServerVersion() {
         return serverVersion;
     }
-
     public void setServerVersion(String serverVersion) {
         this.serverVersion = serverVersion;
     }
-
     public int getHeaderLength() {
         return headerLength;
     }
-
     public void setHeaderLength(int headerLength) {
         this.headerLength = headerLength;
     }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
