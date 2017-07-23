@@ -1,22 +1,7 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.github.echo.mysql.binlog.driver.event;
 
 /**
- * @see <a href="https://dev.mysql.com/doc/internals/en/event-meanings.html">Event Meanings</a> for the original
- * documentation.
- *
+ * @see <a href="https://dev.mysql.com/doc/internals/en/event-meanings.html">Event Meanings</a> for the original documentation.
  */
 public enum EventType {
     /**
@@ -190,24 +175,28 @@ public enum EventType {
      * Prepared XA transaction terminal event similar to XID except that it is specific to XA transaction.
      */
     XA_PREPARE;
+
     public static boolean isRowMutation(EventType eventType) {
         return EventType.isWrite(eventType) ||
-               EventType.isUpdate(eventType) ||
-               EventType.isDelete(eventType);
+                EventType.isUpdate(eventType) ||
+                EventType.isDelete(eventType);
     }
+
     public static boolean isWrite(EventType eventType) {
         return eventType == PRE_GA_WRITE_ROWS ||
-               eventType == WRITE_ROWS ||
-               eventType == EXT_WRITE_ROWS;
+                eventType == WRITE_ROWS ||
+                eventType == EXT_WRITE_ROWS;
     }
+
     public static boolean isUpdate(EventType eventType) {
         return eventType == PRE_GA_UPDATE_ROWS ||
-               eventType == UPDATE_ROWS ||
-               eventType == EXT_UPDATE_ROWS;
+                eventType == UPDATE_ROWS ||
+                eventType == EXT_UPDATE_ROWS;
     }
+
     public static boolean isDelete(EventType eventType) {
         return eventType == PRE_GA_DELETE_ROWS ||
-               eventType == DELETE_ROWS ||
-               eventType == EXT_DELETE_ROWS;
+                eventType == DELETE_ROWS ||
+                eventType == EXT_DELETE_ROWS;
     }
 }
