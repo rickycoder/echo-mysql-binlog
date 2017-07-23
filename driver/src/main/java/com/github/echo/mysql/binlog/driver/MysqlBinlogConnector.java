@@ -1,22 +1,33 @@
 package com.github.echo.mysql.binlog.driver;
 
+import com.github.echo.mysql.binlog.driver.listener.EventListener;
 import com.github.echo.mysql.binlog.driver.listener.LifecycleListener;
 import com.github.echo.mysql.binlog.driver.manager.BinaryLogManager;
 import com.github.echo.mysql.binlog.driver.manager.Connection;
+import com.github.echo.mysql.binlog.driver.network.SocketFactory;
+import com.github.echo.mysql.binlog.driver.network.protocol.PacketChannel;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:smile.ryan@outlook.com">Ryan Chen</a>
  */
 public class MysqlBinlogConnector implements Connection, BinaryLogManager {
+
+    private static final int MAX_PACKET_LENGTH = 16777215;
+
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     private final String host;
     private final int port;
@@ -29,8 +40,32 @@ public class MysqlBinlogConnector implements Connection, BinaryLogManager {
     private volatile long binlogPosition = 4;
     private volatile long connectionId;
 
-    private final Lock connectLock = new ReentrantLock();
+    private final Object gtidSetAccessLock = new Object();
+    private boolean gtidSetFallbackToPurged;
+
+    private EventDeserializer eventDeserializer = new EventDeserializer();
+
+    private final List<EventListener> eventListeners = new LinkedList<EventListener>();
     private final List<LifecycleListener> lifecycleListeners = new LinkedList<LifecycleListener>();
+
+    private SocketFactory socketFactory;
+
+    private volatile PacketChannel channel;
+    private volatile boolean connected;
+
+    private ThreadFactory threadFactory;
+
+    private boolean keepAlive = true;
+    private long keepAliveInterval = TimeUnit.MINUTES.toMillis(1);
+
+    private long heartbeatInterval;
+    private volatile long eventLastSeen;
+
+    private long connectTimeout = TimeUnit.SECONDS.toMillis(3);
+
+    private volatile ExecutorService keepAliveThreadExecutor;
+
+    private final Lock connectLock = new ReentrantLock();
 
     public MysqlBinlogConnector(String host, int port, String username, String password) {
         this.host = host;
@@ -45,12 +80,26 @@ public class MysqlBinlogConnector implements Connection, BinaryLogManager {
             throw new IllegalStateException("MySQL binlog server is already connected");
         }
         try {
-
+            Callable cancelDisconnect = null;
+            channel = openChannel();
+            if (connectTimeout > 0 && !isKeepAliveThreadRunning()) {
+                cancelDisconnect = scheduleDisconnectIn(connectTimeout -
+                        (System.currentTimeMillis() - start));
+            }
         } finally {
             connectLock.unlock();
         }
     }
 
+    private PacketChannel openChannel() throws IOException {
+        Socket socket = socketFactory != null ? socketFactory.createSocket() : new Socket();
+        socket.connect(new InetSocketAddress(host, port), (int) connectTimeout);
+        return new PacketChannel(socket);
+    }
+
+    boolean isKeepAliveThreadRunning() {
+        return keepAliveThreadExecutor != null && !keepAliveThreadExecutor.isShutdown();
+    }
 
 
     @Override
