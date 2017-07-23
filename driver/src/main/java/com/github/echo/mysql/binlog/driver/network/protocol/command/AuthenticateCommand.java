@@ -1,14 +1,29 @@
+/*
+ * Copyright 2013 Stanley Shyiko
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.echo.mysql.binlog.driver.network.protocol.command;
 
-import com.github.echo.mysql.binlog.driver.network.io.ByteArrayOutputStream;
-import com.github.echo.mysql.binlog.driver.network.protocol.CapabilityFlags;
+import com.github.echo.mysql.binlog.driver.io.ByteArrayOutputStream;
+import com.github.echo.mysql.binlog.driver.network.ClientCapabilities;
 
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * @author <a href="mailto:smile.ryan@outlook.com">Ryan Chen</a>
+ * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
  */
 public class AuthenticateCommand implements Command {
 
@@ -39,10 +54,10 @@ public class AuthenticateCommand implements Command {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int clientCapabilities = this.clientCapabilities;
         if (clientCapabilities == 0) {
-            clientCapabilities = CapabilityFlags.LONG_FLAG |
-                    CapabilityFlags.PROTOCOL_4_1 | CapabilityFlags.SECURE_CONNECTION;
+            clientCapabilities = ClientCapabilities.LONG_FLAG |
+                    ClientCapabilities.PROTOCOL_41 | ClientCapabilities.SECURE_CONNECTION;
             if (schema != null) {
-                clientCapabilities |= CapabilityFlags.CONNECT_WITH_DB;
+                clientCapabilities |= ClientCapabilities.CONNECT_WITH_DB;
             }
         }
         buffer.writeInteger(clientCapabilities, 4);

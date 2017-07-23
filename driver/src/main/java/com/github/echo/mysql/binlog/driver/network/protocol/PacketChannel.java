@@ -1,16 +1,35 @@
+/*
+ * Copyright 2013 Stanley Shyiko
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.echo.mysql.binlog.driver.network.protocol;
 
-import com.github.echo.mysql.binlog.driver.network.io.BufferedSocketInputStream;
-import com.github.echo.mysql.binlog.driver.network.io.ByteArrayInputStream;
-import com.github.echo.mysql.binlog.driver.network.io.ByteArrayOutputStream;
+import com.github.echo.mysql.binlog.driver.io.BufferedSocketInputStream;
+import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
+import com.github.echo.mysql.binlog.driver.io.ByteArrayOutputStream;
+import com.github.echo.mysql.binlog.driver.network.IdentityVerificationException;
+import com.github.echo.mysql.binlog.driver.network.SSLSocketFactory;
 import com.github.echo.mysql.binlog.driver.network.protocol.command.Command;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.channels.Channel;
 
 /**
- * @author <a href="mailto:smile.ryan@outlook.com">Ryan Chen</a>
+ * @author <a href="mailto:stanley.shyiko@gmail.com">Stanley Shyiko</a>
  */
 public class PacketChannel implements Channel {
 
@@ -47,11 +66,26 @@ public class PacketChannel implements Channel {
         outputStream.writeInteger(body.length, 3); // packet length
         outputStream.writeInteger(packetNumber, 1);
         outputStream.write(body, 0, body.length);
+        // though it has no effect in case of default (underlying) output stream (SocketOutputStream),
+        // it may be necessary in case of non-default one
         outputStream.flush();
     }
 
     public void write(Command command) throws IOException {
         write(command, 0);
+    }
+
+    public void upgradeToSSL(SSLSocketFactory sslSocketFactory, HostnameVerifier hostnameVerifier) throws IOException {
+        SSLSocket sslSocket = sslSocketFactory.createSocket(this.socket);
+        sslSocket.startHandshake();
+        socket = sslSocket;
+        inputStream = new ByteArrayInputStream(sslSocket.getInputStream());
+        outputStream = new ByteArrayOutputStream(sslSocket.getOutputStream());
+        if (hostnameVerifier != null && !hostnameVerifier.verify(sslSocket.getInetAddress().getHostName(),
+            sslSocket.getSession())) {
+            throw new IdentityVerificationException("\"" + sslSocket.getInetAddress().getHostName() +
+                "\" identity was not confirmed");
+        }
     }
 
     @Override
@@ -62,7 +96,7 @@ public class PacketChannel implements Channel {
     @Override
     public void close() throws IOException {
         try {
-            socket.shutdownInput();
+            socket.shutdownInput(); // for socketInputStream.setEOF(true)
         } catch (Exception e) {
             // ignore
         }
