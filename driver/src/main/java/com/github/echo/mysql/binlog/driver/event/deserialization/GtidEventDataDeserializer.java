@@ -17,10 +17,13 @@ package com.github.echo.mysql.binlog.driver.event.deserialization;
 
 import com.github.echo.mysql.binlog.driver.event.GtidEventData;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
+
 import java.io.IOException;
+
 /**
  * @author <a href="mailto:pprasse@actindo.de">Patrick Prasse</a>
  */
+
 public class GtidEventDataDeserializer implements EventDataDeserializer<GtidEventData> {
     @Override
     public GtidEventData deserialize(ByteArrayInputStream inputStream) throws IOException {
@@ -30,14 +33,15 @@ public class GtidEventDataDeserializer implements EventDataDeserializer<GtidEven
         long gno = inputStream.readLong(8);
         eventData.setFlags(flags);
         eventData.setGtid(byteArrayToHex(sid, 0, 4) + "-" +
-            byteArrayToHex(sid, 4, 2) + "-" +
-            byteArrayToHex(sid, 6, 2) + "-" +
-            byteArrayToHex(sid, 8, 2) + "-" +
-            byteArrayToHex(sid, 10, 6) + ":" +
-            String.format("%d", gno)
+                byteArrayToHex(sid, 4, 2) + "-" +
+                byteArrayToHex(sid, 6, 2) + "-" +
+                byteArrayToHex(sid, 8, 2) + "-" +
+                byteArrayToHex(sid, 10, 6) + ":" +
+                String.format("%d", gno)
         );
         return eventData;
     }
+
     private String byteArrayToHex(byte[] a, int offset, int len) {
         StringBuilder sb = new StringBuilder();
         for (int idx = offset; idx < (offset + len) && idx < a.length; idx++) {

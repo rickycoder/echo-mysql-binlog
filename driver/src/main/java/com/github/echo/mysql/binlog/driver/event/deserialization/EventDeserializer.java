@@ -1,24 +1,12 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.github.echo.mysql.binlog.driver.event.deserialization;
 
+import com.github.echo.mysql.binlog.driver.event.Event;
 import com.github.echo.mysql.binlog.driver.event.EventData;
 import com.github.echo.mysql.binlog.driver.event.EventHeader;
 import com.github.echo.mysql.binlog.driver.event.EventType;
 import com.github.echo.mysql.binlog.driver.event.TableMapEventData;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
-import com.github.echo.mysql.binlog.driver.event.Event;
+
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -29,19 +17,23 @@ public class EventDeserializer {
     private final EventHeaderDeserializer eventHeaderDeserializer;
     private final EventDataDeserializer defaultEventDataDeserializer;
     private final Map<EventType, EventDataDeserializer> eventDataDeserializers;
+    private final Map<Long, TableMapEventData> tableMapEventByTableId;
     private EnumSet<CompatibilityMode> compatibilitySet = EnumSet.noneOf(CompatibilityMode.class);
     private int checksumLength;
-    private final Map<Long, TableMapEventData> tableMapEventByTableId;
     private EventDataDeserializer tableMapEventDataDeserializer;
+
     public EventDeserializer() {
         this(new EventHeaderV4Deserializer(), new NullEventDataDeserializer());
     }
+
     public EventDeserializer(EventHeaderDeserializer eventHeaderDeserializer) {
         this(eventHeaderDeserializer, new NullEventDataDeserializer());
     }
+
     public EventDeserializer(EventDataDeserializer defaultEventDataDeserializer) {
         this(new EventHeaderV4Deserializer(), defaultEventDataDeserializer);
     }
+
     public EventDeserializer(
             EventHeaderDeserializer eventHeaderDeserializer,
             EventDataDeserializer defaultEventDataDeserializer
@@ -53,6 +45,7 @@ public class EventDeserializer {
         registerDefaultEventDataDeserializers();
         afterEventDataDeserializerSet(null);
     }
+
     public EventDeserializer(
             EventHeaderDeserializer eventHeaderDeserializer,
             EventDataDeserializer defaultEventDataDeserializer,
@@ -65,13 +58,14 @@ public class EventDeserializer {
         this.tableMapEventByTableId = tableMapEventByTableId;
         afterEventDataDeserializerSet(null);
     }
+
     private void registerDefaultEventDataDeserializers() {
         eventDataDeserializers.put(EventType.FORMAT_DESCRIPTION,
                 new FormatDescriptionEventDataDeserializer());
         eventDataDeserializers.put(EventType.ROTATE,
                 new RotateEventDataDeserializer());
         eventDataDeserializers.put(EventType.INTVAR,
-            new IntVarEventDataDeserializer());
+                new IntVarEventDataDeserializer());
         eventDataDeserializers.put(EventType.QUERY,
                 new QueryEventDataDeserializer());
         eventDataDeserializers.put(EventType.TABLE_MAP,
@@ -97,31 +91,35 @@ public class EventDeserializer {
                 new RowsQueryEventDataDeserializer());
         eventDataDeserializers.put(EventType.GTID,
                 new GtidEventDataDeserializer());
-       eventDataDeserializers.put(EventType.PREVIOUS_GTIDS,
-               new PreviousGtidSetDeserializer());
+        eventDataDeserializers.put(EventType.PREVIOUS_GTIDS,
+                new PreviousGtidSetDeserializer());
         eventDataDeserializers.put(EventType.XA_PREPARE,
                 new XAPrepareEventDataDeserializer());
     }
+
     public void setEventDataDeserializer(EventType eventType, EventDataDeserializer eventDataDeserializer) {
         ensureCompatibility(eventDataDeserializer);
         eventDataDeserializers.put(eventType, eventDataDeserializer);
         afterEventDataDeserializerSet(eventType);
     }
+
     private void afterEventDataDeserializerSet(EventType eventType) {
         if (eventType == null || eventType == EventType.TABLE_MAP) {
             EventDataDeserializer eventDataDeserializer = getEventDataDeserializer(EventType.TABLE_MAP);
             if (eventDataDeserializer.getClass() != TableMapEventDataDeserializer.class &&
-                eventDataDeserializer.getClass() != EventDataWrapper.Deserializer.class) {
+                    eventDataDeserializer.getClass() != EventDataWrapper.Deserializer.class) {
                 tableMapEventDataDeserializer = new EventDataWrapper.Deserializer(
-                    new TableMapEventDataDeserializer(), eventDataDeserializer);
+                        new TableMapEventDataDeserializer(), eventDataDeserializer);
             } else {
                 tableMapEventDataDeserializer = null;
             }
         }
     }
+
     public void setChecksumType(ChecksumType checksumType) {
         this.checksumLength = checksumType.getLength();
     }
+
     /**
      * @see CompatibilityMode
      */
@@ -131,22 +129,24 @@ public class EventDeserializer {
             ensureCompatibility(eventDataDeserializer);
         }
     }
+
     private void ensureCompatibility(EventDataDeserializer eventDataDeserializer) {
         if (eventDataDeserializer instanceof AbstractRowsEventDataDeserializer) {
             AbstractRowsEventDataDeserializer deserializer =
-                (AbstractRowsEventDataDeserializer) eventDataDeserializer;
+                    (AbstractRowsEventDataDeserializer) eventDataDeserializer;
             deserializer.setDeserializeDateAndTimeAsLong(
-                compatibilitySet.contains(CompatibilityMode.DATE_AND_TIME_AS_LONG) ||
-                compatibilitySet.contains(CompatibilityMode.DATE_AND_TIME_AS_LONG_MICRO)
+                    compatibilitySet.contains(CompatibilityMode.DATE_AND_TIME_AS_LONG) ||
+                            compatibilitySet.contains(CompatibilityMode.DATE_AND_TIME_AS_LONG_MICRO)
             );
             deserializer.setMicrosecondsPrecision(
-                compatibilitySet.contains(CompatibilityMode.DATE_AND_TIME_AS_LONG_MICRO)
+                    compatibilitySet.contains(CompatibilityMode.DATE_AND_TIME_AS_LONG_MICRO)
             );
             deserializer.setDeserializeCharAndBinaryAsByteArray(
-                compatibilitySet.contains(CompatibilityMode.CHAR_AND_BINARY_AS_BYTE_ARRAY)
+                    compatibilitySet.contains(CompatibilityMode.CHAR_AND_BINARY_AS_BYTE_ARRAY)
             );
         }
     }
+
     /**
      * @return deserialized event or null in case of end-of-stream
      */
@@ -175,8 +175,9 @@ public class EventDeserializer {
         }
         return new Event(eventHeader, eventData);
     }
+
     private EventData deserializeEventData(ByteArrayInputStream inputStream, EventHeader eventHeader,
-            EventDataDeserializer eventDataDeserializer) throws EventDataDeserializationException {
+                                           EventDataDeserializer eventDataDeserializer) throws EventDataDeserializationException {
         // todo: use checksum algorithm descriptor from FormatDescriptionEvent
         // (as per http://dev.mysql.com/worklog/task/?id=2540)
         int eventBodyLength = (int) eventHeader.getDataLength() - checksumLength;
@@ -194,10 +195,12 @@ public class EventDeserializer {
         }
         return eventData;
     }
+
     public EventDataDeserializer getEventDataDeserializer(EventType eventType) {
         EventDataDeserializer eventDataDeserializer = eventDataDeserializers.get(eventType);
         return eventDataDeserializer != null ? eventDataDeserializer : defaultEventDataDeserializer;
     }
+
     /**
      * @see CompatibilityMode#DATE_AND_TIME_AS_LONG
      * @see CompatibilityMode#DATE_AND_TIME_AS_LONG_MICRO
@@ -208,7 +211,7 @@ public class EventDeserializer {
          * Return DATETIME/DATETIME_V2/TIMESTAMP/TIMESTAMP_V2/DATE/TIME/TIME_V2 values as long|s
          * (number of milliseconds since the epoch (00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
          * not counting leap seconds)) (instead of java.util.Date/java.sql.Timestamp/java.sql.Date/new java.sql.Time).
-         *
+         * <p>
          * <p>This option is going to be enabled by default starting from mysql-binlog-connector-java@1.0.0.
          */
         DATE_AND_TIME_AS_LONG,
@@ -218,11 +221,12 @@ public class EventDeserializer {
         DATE_AND_TIME_AS_LONG_MICRO,
         /**
          * Return CHAR/VARCHAR/BINARY/VARBINARY values as byte[]|s (instead of String|s).
-         *
+         * <p>
          * <p>This option is going to be enabled by default starting from mysql-binlog-connector-java@1.0.0.
          */
         CHAR_AND_BINARY_AS_BYTE_ARRAY
     }
+
     /**
      * Enwraps internal {@link EventData} if custom {@link EventDataDeserializer} is provided (for internally used
      * events only).
@@ -230,16 +234,20 @@ public class EventDeserializer {
     public static class EventDataWrapper implements EventData {
         private EventData internal;
         private EventData external;
+
         public EventDataWrapper(EventData internal, EventData external) {
             this.internal = internal;
             this.external = external;
         }
+
         public EventData getInternal() {
             return internal;
         }
+
         public EventData getExternal() {
             return external;
         }
+
         @Override
         public String toString() {
             final StringBuilder sb = new StringBuilder("InternalEventData");
@@ -248,16 +256,19 @@ public class EventDeserializer {
             sb.append('}');
             return sb.toString();
         }
+
         /**
          * {@link EventDeserializer.EventDataWrapper} deserializer.
          */
         public static class Deserializer implements EventDataDeserializer {
             private EventDataDeserializer internal;
             private EventDataDeserializer external;
+
             public Deserializer(EventDataDeserializer internal, EventDataDeserializer external) {
                 this.internal = internal;
                 this.external = external;
             }
+
             @Override
             public EventData deserialize(ByteArrayInputStream inputStream) throws IOException {
                 byte[] bytes = inputStream.read(inputStream.available());

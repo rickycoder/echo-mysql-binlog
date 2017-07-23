@@ -16,6 +16,7 @@
 package com.github.echo.mysql.binlog.driver.network;
 
 import sun.security.util.HostnameChecker;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;

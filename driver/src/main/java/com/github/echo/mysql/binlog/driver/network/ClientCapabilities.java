@@ -1,22 +1,8 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.github.echo.mysql.binlog.driver.network;
 
 /**
- *
  * @see <a href="http://dev.mysql.com/doc/internals/en/capability-flags.html#packet-Protocol::CapabilityFlags">
- *      Capability Flags</a>
+ * Capability Flags</a>
  */
 public final class ClientCapabilities {
     public static final int LONG_PASSWORD = 1; /* new more secure passwords */
@@ -41,6 +27,7 @@ public final class ClientCapabilities {
     public static final int PLUGIN_AUTH = 1 << 19; /* client supports plugin authentication */
     public static final int SSL_VERIFY_SERVER_CERT = 1 << 30;
     public static final int REMEMBER_OPTIONS = 1 << 31;
+
     private ClientCapabilities() {
     }
 }

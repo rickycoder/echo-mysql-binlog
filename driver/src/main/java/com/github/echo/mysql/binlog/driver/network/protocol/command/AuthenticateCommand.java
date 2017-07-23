@@ -1,20 +1,8 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.github.echo.mysql.binlog.driver.network.protocol.command;
 
 import com.github.echo.mysql.binlog.driver.io.ByteArrayOutputStream;
 import com.github.echo.mysql.binlog.driver.network.ClientCapabilities;
+
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,18 +14,51 @@ public class AuthenticateCommand implements Command {
     private String salt;
     private int clientCapabilities;
     private int collation;
+
     public AuthenticateCommand(String schema, String username, String password, String salt) {
         this.schema = schema;
         this.username = username;
         this.password = password;
         this.salt = salt;
     }
+
+    /**
+     * see mysql/sql/password.c scramble(...)
+     */
+    private static byte[] passwordCompatibleWithMySQL411(String password, String salt) {
+        MessageDigest sha;
+        try {
+            sha = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] passwordHash = sha.digest(password.getBytes());
+        return xor(passwordHash, sha.digest(union(salt.getBytes(), sha.digest(passwordHash))));
+    }
+
+    private static byte[] union(byte[] a, byte[] b) {
+        byte[] r = new byte[a.length + b.length];
+        System.arraycopy(a, 0, r, 0, a.length);
+        System.arraycopy(b, 0, r, a.length, b.length);
+        return r;
+    }
+
+    private static byte[] xor(byte[] a, byte[] b) {
+        byte[] r = new byte[a.length];
+        for (int i = 0; i < r.length; i++) {
+            r[i] = (byte) (a[i] ^ b[i]);
+        }
+        return r;
+    }
+
     public void setClientCapabilities(int clientCapabilities) {
         this.clientCapabilities = clientCapabilities;
     }
+
     public void setCollation(int collation) {
         this.collation = collation;
     }
+
     @Override
     public byte[] toByteArray() throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -63,31 +84,5 @@ public class AuthenticateCommand implements Command {
             buffer.writeZeroTerminatedString(schema);
         }
         return buffer.toByteArray();
-    }
-    /**
-     * see mysql/sql/password.c scramble(...)
-     */
-    private static byte[] passwordCompatibleWithMySQL411(String password, String salt) {
-        MessageDigest sha;
-        try {
-            sha = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        byte[] passwordHash = sha.digest(password.getBytes());
-        return xor(passwordHash, sha.digest(union(salt.getBytes(), sha.digest(passwordHash))));
-    }
-    private static byte[] union(byte[] a, byte[] b) {
-        byte[] r = new byte[a.length + b.length];
-        System.arraycopy(a, 0, r, 0, a.length);
-        System.arraycopy(b, 0, r, a.length, b.length);
-        return r;
-    }
-    private static byte[] xor(byte[] a, byte[] b) {
-        byte[] r = new byte[a.length];
-        for (int i = 0; i < r.length; i++) {
-            r[i] = (byte) (a[i] ^ b[i]);
-        }
-        return r;
     }
 }

@@ -1,16 +1,3 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.github.echo.mysql.binlog.driver.event;
 
 import java.util.BitSet;
@@ -22,42 +9,55 @@ public class TableMapEventData implements EventData {
     private byte[] columnTypes;
     private int[] columnMetadata;
     private BitSet columnNullability;
+
     public long getTableId() {
         return tableId;
     }
+
     public void setTableId(long tableId) {
         this.tableId = tableId;
     }
+
     public String getDatabase() {
         return database;
     }
+
     public void setDatabase(String database) {
         this.database = database;
     }
+
     public String getTable() {
         return table;
     }
+
     public void setTable(String table) {
         this.table = table;
     }
+
     public byte[] getColumnTypes() {
         return columnTypes;
     }
+
     public void setColumnTypes(byte[] columnTypes) {
         this.columnTypes = columnTypes;
     }
+
     public int[] getColumnMetadata() {
         return columnMetadata;
     }
+
     public void setColumnMetadata(int[] columnMetadata) {
         this.columnMetadata = columnMetadata;
     }
+
     public BitSet getColumnNullability() {
         return columnNullability;
     }
+
     public void setColumnNullability(BitSet columnNullability) {
         this.columnNullability = columnNullability;
     }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

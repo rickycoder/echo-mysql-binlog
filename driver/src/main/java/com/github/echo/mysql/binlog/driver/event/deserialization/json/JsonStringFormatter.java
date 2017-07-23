@@ -16,13 +16,16 @@
 package com.github.echo.mysql.binlog.driver.event.deserialization.json;
 
 import com.github.echo.mysql.binlog.driver.event.deserialization.ColumnType;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
 /**
  * A {@link JsonFormatter} implementation that creates a JSON string representation.
  *
  * @author <a href="mailto:rhauch@gmail.com">Randall Hauch</a>
  */
+
 public class JsonStringFormatter implements JsonFormatter {
     /**
      * Value used for lookup tables to indicate that matching characters
@@ -41,6 +44,8 @@ public class JsonStringFormatter implements JsonFormatter {
      * preceding backslash; and negative values that generic escaping (e.g., {@code \\uXXXX}).
      */
     private static final int[] ESCAPES;
+    private static final char[] HEX_CODES = "0123456789ABCDEF".toCharArray();
+
     static {
         int[] escape = new int[128];
         // Generic escape for control characters ...
@@ -58,51 +63,62 @@ public class JsonStringFormatter implements JsonFormatter {
         escape[0x0D] = 'r';
         ESCAPES = escape;
     }
-    private static final char[] HEX_CODES = "0123456789ABCDEF".toCharArray();
+
     private final StringBuilder sb = new StringBuilder();
+
     @Override
     public String toString() {
         return getString();
     }
+
     public String getString() {
         return sb.toString();
     }
+
     @Override
     public void beginObject(int numElements) {
         sb.append('{');
     }
+
     @Override
     public void beginArray(int numElements) {
         sb.append('[');
     }
+
     @Override
     public void endObject() {
         sb.append('}');
     }
+
     @Override
     public void endArray() {
         sb.append(']');
     }
+
     @Override
     public void name(String name) {
         sb.append('"');
         appendString(name);
         sb.append("\":");
     }
+
     @Override
     public void value(String value) {
         sb.append('"');
         appendString(value);
         sb.append('"');
     }
+
     @Override
     public void value(int value) {
         sb.append(Integer.toString(value));
     }
+
     @Override
     public void value(long value) {
         sb.append(Long.toString(value));
     }
+
     @Override
     public void value(double value) {
         // Double's toString method will result in scientific notation and loss of precision
@@ -113,34 +129,41 @@ public class JsonStringFormatter implements JsonFormatter {
             sb.append(str);
         }
     }
+
     @Override
     public void value(BigInteger value) {
         // Using the BigInteger.toString() method will result in scientific notation, so instead ...
         value(new BigDecimal(value));
     }
+
     @Override
     public void value(BigDecimal value) {
         // Using the BigInteger.toString() method will result in scientific notation, so instead ...
         sb.append(value.toPlainString());
     }
+
     @Override
     public void value(boolean value) {
         sb.append(Boolean.toString(value));
     }
+
     @Override
     public void valueNull() {
         sb.append("null");
     }
+
     @Override
     public void valueYear(int year) {
         sb.append(year);
     }
+
     @Override
     public void valueDate(int year, int month, int day) {
         sb.append('"');
         appendDate(year, month, day);
         sb.append('"');
     }
+
     @Override
     // checkstyle, please ignore ParameterNumber for the next line
     public void valueDatetime(int year, int month, int day, int hour, int min, int sec, int microSeconds) {
@@ -150,6 +173,7 @@ public class JsonStringFormatter implements JsonFormatter {
         appendTime(hour, min, sec, microSeconds);
         sb.append('"');
     }
+
     @Override
     public void valueTime(int hour, int min, int sec, int microSeconds) {
         sb.append('"');
@@ -160,21 +184,25 @@ public class JsonStringFormatter implements JsonFormatter {
         appendTime(hour, min, sec, microSeconds);
         sb.append('"');
     }
+
     @Override
     public void valueTimestamp(long secondsPastEpoch, int microSeconds) {
         sb.append(secondsPastEpoch);
         appendSixDigitUnsignedInt(microSeconds, false);
     }
+
     @Override
     public void valueOpaque(ColumnType type, byte[] value) {
         sb.append('"');
         sb.append(javax.xml.bind.DatatypeConverter.printBase64Binary(value));
         sb.append('"');
     }
+
     @Override
     public void nextEntry() {
         sb.append(',');
     }
+
     /**
      * Append a string by escaping any characters that must be escaped.
      *
@@ -197,6 +225,7 @@ public class JsonStringFormatter implements JsonFormatter {
             }
         }
     }
+
     /**
      * Append a generic Unicode escape (e.g., {@code \\uXXXX}) for given character.
      *
@@ -218,6 +247,7 @@ public class JsonStringFormatter implements JsonFormatter {
         sb.append(HEX_CODES[charToEscape >> 4]);
         sb.append(HEX_CODES[charToEscape & 0xF]);
     }
+
     protected void appendTwoDigitUnsignedInt(int value) {
         assert value >= 0;
         assert value < 100;
@@ -227,6 +257,7 @@ public class JsonStringFormatter implements JsonFormatter {
             sb.append(value);
         }
     }
+
     protected void appendFourDigitUnsignedInt(int value) {
         if (value < 10) {
             sb.append("000").append(value);
@@ -238,6 +269,7 @@ public class JsonStringFormatter implements JsonFormatter {
             sb.append(value);
         }
     }
+
     protected void appendSixDigitUnsignedInt(int value, boolean trimTrailingZeros) {
         assert value > 0;
         assert value < 1000000;
@@ -263,6 +295,7 @@ public class JsonStringFormatter implements JsonFormatter {
             sb.append(value);
         }
     }
+
     protected void appendDate(int year, int month, int day) {
         if (year < 0) {
             sb.append('-');
@@ -274,6 +307,7 @@ public class JsonStringFormatter implements JsonFormatter {
         sb.append('-');
         appendTwoDigitUnsignedInt(day);
     }
+
     protected void appendTime(int hour, int min, int sec, int microSeconds) {
         appendTwoDigitUnsignedInt(hour);
         sb.append(':');

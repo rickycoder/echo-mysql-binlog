@@ -1,16 +1,3 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.github.echo.mysql.binlog.driver.event.deserialization;
 
 import java.util.HashMap;
@@ -50,21 +37,26 @@ public enum ColumnType {
     VAR_STRING(253),
     STRING(254),
     GEOMETRY(255);
-    private int code;
-    private ColumnType(int code) {
-        this.code = code;
-    }
-    public int getCode() {
-        return code;
-    }
     private static final Map<Integer, ColumnType> INDEX_BY_CODE;
+
     static {
         INDEX_BY_CODE = new HashMap<Integer, ColumnType>();
         for (ColumnType columnType : values()) {
             INDEX_BY_CODE.put(columnType.code, columnType);
         }
     }
+
+    private int code;
+
+    ColumnType(int code) {
+        this.code = code;
+    }
+
     public static ColumnType byCode(int code) {
         return INDEX_BY_CODE.get(code);
+    }
+
+    public int getCode() {
+        return code;
     }
 }

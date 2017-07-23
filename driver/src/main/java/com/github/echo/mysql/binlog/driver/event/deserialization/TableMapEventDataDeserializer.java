@@ -1,23 +1,20 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.github.echo.mysql.binlog.driver.event.deserialization;
 
 import com.github.echo.mysql.binlog.driver.event.TableMapEventData;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
+
 import java.io.IOException;
 
 public class TableMapEventDataDeserializer implements EventDataDeserializer<TableMapEventData> {
+    private static int bigEndianInteger(byte[] bytes, int offset, int length) {
+        int result = 0;
+        for (int i = offset; i < (offset + length); i++) {
+            byte b = bytes[i];
+            result = (result << 8) | (b >= 0 ? (int) b : (b + 256));
+        }
+        return result;
+    }
+
     @Override
     public TableMapEventData deserialize(ByteArrayInputStream inputStream) throws IOException {
         TableMapEventData eventData = new TableMapEventData();
@@ -33,10 +30,11 @@ public class TableMapEventDataDeserializer implements EventDataDeserializer<Tabl
         eventData.setColumnNullability(inputStream.readBitSet(numberOfColumns, true));
         return eventData;
     }
+
     private int[] readMetadata(ByteArrayInputStream inputStream, byte[] columnTypes) throws IOException {
         int[] metadata = new int[columnTypes.length];
         for (int i = 0; i < columnTypes.length; i++) {
-            switch(ColumnType.byCode(columnTypes[i] & 0xFF)) {
+            switch (ColumnType.byCode(columnTypes[i] & 0xFF)) {
                 case FLOAT:
                 case DOUBLE:
                 case BLOB:
@@ -64,13 +62,5 @@ public class TableMapEventDataDeserializer implements EventDataDeserializer<Tabl
             }
         }
         return metadata;
-    }
-    private static int bigEndianInteger(byte[] bytes, int offset, int length) {
-        int result = 0;
-        for (int i = offset; i < (offset + length); i++) {
-            byte b = bytes[i];
-            result = (result << 8) | (b >= 0 ? (int) b : (b + 256));
-        }
-        return result;
     }
 }

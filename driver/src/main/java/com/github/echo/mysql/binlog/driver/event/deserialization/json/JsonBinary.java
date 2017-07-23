@@ -18,20 +18,22 @@ package com.github.echo.mysql.binlog.driver.event.deserialization.json;
 import com.github.echo.mysql.binlog.driver.event.deserialization.AbstractRowsEventDataDeserializer;
 import com.github.echo.mysql.binlog.driver.event.deserialization.ColumnType;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayInputStream;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+
 /**
  * Utility to parse the binary-encoded value of a MySQL {@code JSON} type, translating the encoded representation into
  * method calls on a supplied {@link JsonFormatter} implementation.
- *
+ * <p>
  * <h2>Binary Format</h2>
- *
+ * <p>
  * Each JSON value (scalar, object or array) has a one byte type identifier followed by the actual value.
- *
+ * <p>
  * <h3>Scalar</h3>
- *
+ * <p>
  * The binary value may contain a single scalar that is one of:
  * <ul>
  * <li>null</li>
@@ -52,9 +54,9 @@ import java.nio.charset.Charset;
  * microseconds before epoch (January 1, 1970)</li>
  * <li>any other MySQL value encoded as an opaque binary value</li>
  * </ul>
- *
+ * <p>
  * <h3>JSON Object</h3>
- *
+ * <p>
  * If the value is a JSON object, its binary representation will have a header that contains:
  * <ul>
  * <li>the member count</li>
@@ -62,11 +64,11 @@ import java.nio.charset.Charset;
  * <li>a list of pointers to each key</li>
  * <li>a list of pointers to each value</li>
  * </ul>
- *
+ * <p>
  * The actual keys and values will come after the header, in the same order as in the header.
- *
+ * <p>
  * <h3>JSON Array</h3>
- *
+ * <p>
  * If the value is a JSON array, the binary representation will have a header with
  * <ul>
  * <li>the element count</li>
@@ -74,12 +76,12 @@ import java.nio.charset.Charset;
  * <li>a list of pointers to each value</li>
  * </ul>
  * followed by the actual values, in the same order as in the header.
- *
+ * <p>
  * <h2>Grammar</h2>
  * The grammar of the binary representation of JSON objects are defined in the MySQL codebase in the
  * <a href="https://github.com/mysql/mysql-server/blob/5.7/sql/json_binary.h">json_binary.h</a> file:
  * <p>
- *
+ * <p>
  * <pre>
  *   doc ::= type value
  *   type ::=
@@ -148,8 +150,19 @@ import java.nio.charset.Charset;
  *
  * @author <a href="mailto:rhauch@gmail.com">Randall Hauch</a>
  */
+
 public class JsonBinary {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
+    private final ByteArrayInputStream reader;
+
+    public JsonBinary(byte[] bytes) {
+        this(new ByteArrayInputStream(bytes));
+    }
+
+    public JsonBinary(ByteArrayInputStream contents) {
+        this.reader = contents;
+    }
+
     /**
      * Parse the MySQL binary representation of a {@code JSON} value and return the JSON string representation.
      * <p>
@@ -164,24 +177,27 @@ public class JsonBinary {
         parse(bytes, handler);
         return handler.getString();
     }
+
     /**
      * Parse the MySQL binary representation of a {@code JSON} value and call the supplied {@link JsonFormatter}
      * for the various components of the value.
      *
-     * @param bytes the binary representation; may not be null
+     * @param bytes     the binary representation; may not be null
      * @param formatter the formatter that will be called as the binary representation is parsed; may not be null
      * @throws IOException if there is a problem reading or processing the binary representation
      */
     public static void parse(byte[] bytes, JsonFormatter formatter) throws IOException {
         new JsonBinary(bytes).parse(formatter);
     }
-    private final ByteArrayInputStream reader;
-    public JsonBinary(byte[] bytes) {
-        this(new ByteArrayInputStream(bytes));
+
+    protected static String asHex(byte b) {
+        return String.format("%02X ", b);
     }
-    public JsonBinary(ByteArrayInputStream contents) {
-        this.reader = contents;
+
+    protected static String asHex(int value) {
+        return Integer.toHexString(value);
     }
+
     public String getString() {
         JsonStringFormatter handler = new JsonStringFormatter();
         try {
@@ -191,9 +207,11 @@ public class JsonBinary {
         }
         return handler.getString();
     }
+
     public void parse(JsonFormatter formatter) throws IOException {
         parse(readValueType(), formatter);
     }
+
     protected void parse(ValueType type, JsonFormatter formatter) throws IOException {
         switch (type) {
             case SMALL_DOCUMENT:
@@ -240,18 +258,19 @@ public class JsonBinary {
                 break;
             default:
                 throw new IOException("Unknown type value '" + asHex(type.getCode()) +
-                    "' in first byte of a JSON value");
+                        "' in first byte of a JSON value");
         }
     }
+
     /**
      * Parse a JSON object.
      * <p>
      * The grammar of the binary representation of JSON objects are defined in the MySQL code base in the
      * <a href="https://github.com/mysql/mysql-server/blob/5.7/sql/json_binary.h">json_binary.h</a> file:
      * <h3>Grammar</h3>
-     *
+     * <p>
      * <h3>Grammar</h3>
-     *
+     * <p>
      * <pre>
      *   value ::=
      *       object  |
@@ -301,7 +320,7 @@ public class JsonBinary {
      *                           // lengths up to 16383, and so on...
      * </pre>
      *
-     * @param small {@code true} if the object being read is "small", or {@code false} otherwise
+     * @param small     {@code true} if the object being read is "small", or {@code false} otherwise
      * @param formatter the formatter to be notified of the parsed value; may not be null
      * @throws IOException if there is a problem reading the JSON value
      */
@@ -386,15 +405,16 @@ public class JsonBinary {
         }
         formatter.endObject();
     }
+
     /**
      * Parse a JSON array.
      * <p>
      * The grammar of the binary representation of JSON objects are defined in the MySQL code base in the
      * <a href="https://github.com/mysql/mysql-server/blob/5.7/sql/json_binary.h">json_binary.h</a> file, and are:
      * <h3>Grammar</h3>
-     *
+     * <p>
      * <h3>Grammar</h3>
-     *
+     * <p>
      * <pre>
      *   value ::=
      *       object  |
@@ -439,7 +459,7 @@ public class JsonBinary {
      *                           // lengths up to 16383, and so on...
      * </pre>
      *
-     * @param small {@code true} if the object being read is "small", or {@code false} otherwise
+     * @param small     {@code true} if the object being read is "small", or {@code false} otherwise
      * @param formatter the formatter to be notified of the parsed value; may not be null
      * @throws IOException if there is a problem reading the JSON value
      */
@@ -513,6 +533,7 @@ public class JsonBinary {
         }
         formatter.endArray();
     }
+
     /**
      * Parse a literal value that is either null, {@code true}, or {@code false}.
      *
@@ -527,6 +548,7 @@ public class JsonBinary {
             formatter.value(literal);
         }
     }
+
     /**
      * Parse a 2 byte integer value.
      *
@@ -537,6 +559,7 @@ public class JsonBinary {
         int value = readInt16();
         formatter.value(value);
     }
+
     /**
      * Parse a 2 byte unsigned integer value.
      *
@@ -547,6 +570,7 @@ public class JsonBinary {
         int value = readUInt16();
         formatter.value(value);
     }
+
     /**
      * Parse a 4 byte integer value.
      *
@@ -557,6 +581,7 @@ public class JsonBinary {
         int value = readInt32();
         formatter.value(value);
     }
+
     /**
      * Parse a 4 byte unsigned integer value.
      *
@@ -567,6 +592,7 @@ public class JsonBinary {
         long value = readUInt32();
         formatter.value(value);
     }
+
     /**
      * Parse a 8 byte integer value.
      *
@@ -577,6 +603,7 @@ public class JsonBinary {
         long value = readInt64();
         formatter.value(value);
     }
+
     /**
      * Parse a 8 byte unsigned integer value.
      *
@@ -587,6 +614,7 @@ public class JsonBinary {
         BigInteger value = readUInt64();
         formatter.value(value);
     }
+
     /**
      * Parse a 8 byte double value.
      *
@@ -598,6 +626,7 @@ public class JsonBinary {
         double value = Double.longBitsToDouble(rawValue);
         formatter.value(value);
     }
+
     /**
      * Parse the length and value of a string stored in MySQL's "utf8mb" character set (which equates to Java's
      * UTF-8 character set. The length is a {@link #readVariableInt() variable length integer} length of the string.
@@ -610,6 +639,7 @@ public class JsonBinary {
         String value = new String(reader.read(length), UTF_8);
         formatter.value(value);
     }
+
     /**
      * Parse an opaque type. Specific types such as {@link #parseDate(JsonFormatter) DATE},
      * {@link #parseTime(JsonFormatter) TIME}, and {@link #parseDatetime(JsonFormatter) DATETIME} values are
@@ -623,7 +653,7 @@ public class JsonBinary {
      * MySQL source code</a> for the logic used in this method.
      * <p>
      * <h3>Grammar</h3>
-     *
+     * <p>
      * <pre>
      *   custom-data ::= custom-type data-length binary-data
      *   custom-type ::= uint8   // type identifier that matches the
@@ -635,7 +665,6 @@ public class JsonBinary {
      *                           // lengths up to 127, 2 bytes to represent
      *                           // lengths up to 16383, and so on...
      * </pre>
-     *
      *
      * @param formatter the formatter to be notified of the parsed value; may not be null
      * @throws IOException if there is a problem reading the JSON value
@@ -684,12 +713,13 @@ public class JsonBinary {
                 parseOpaqueValue(type, length, formatter);
         }
     }
+
     /**
      * Parse a {@code DATE} value, which is stored using the same format as {@code DATETIME}:
      * 5 bytes + fractional-seconds storage. However, the hour, minute, second, and fractional seconds are ignored.
      * <p>
      * The non-fractional part is 40 bits:
-     *
+     * <p>
      * <pre>
      *  1 bit  sign           (1= non-negative, 0= negative)
      *  17 bits year*13+month  (year 0-9999, month 0-12)
@@ -698,7 +728,7 @@ public class JsonBinary {
      *   6 bits minute         (0-59)
      *   6 bits second         (0-59)
      * </pre>
-     *
+     * <p>
      * The fractional part is typically dependent upon the <i>fsp</i> (i.e., fractional seconds part) defined by
      * a column, but in the case of JSON it is always 3 bytes.
      * <p>
@@ -719,12 +749,13 @@ public class JsonBinary {
         int day = (int) (value >> 17) % (1 << 5); // 5 bits starting at 17th
         formatter.valueDate(year, month, day);
     }
+
     /**
      * Parse a {@code TIME} value, which is stored using the same format as {@code DATETIME}:
      * 5 bytes + fractional-seconds storage. However, the year, month, and day values are ignored
      * <p>
      * The non-fractional part is 40 bits:
-     *
+     * <p>
      * <pre>
      *  1 bit  sign           (1= non-negative, 0= negative)
      *  17 bits year*13+month  (year 0-9999, month 0-12)
@@ -733,7 +764,7 @@ public class JsonBinary {
      *   6 bits minute         (0-59)
      *   6 bits second         (0-59)
      * </pre>
-     *
+     * <p>
      * The fractional part is typically dependent upon the <i>fsp</i> (i.e., fractional seconds part) defined by
      * a column, but in the case of JSON it is always 3 bytes.
      * <p>
@@ -758,11 +789,12 @@ public class JsonBinary {
         int microSeconds = (int) (raw % (1 << 24));
         formatter.valueTime(hour, min, sec, microSeconds);
     }
+
     /**
      * Parse a {@code DATETIME} value, which is stored as 5 bytes + fractional-seconds storage.
      * <p>
      * The non-fractional part is 40 bits:
-     *
+     * <p>
      * <pre>
      *  1 bit  sign           (1= non-negative, 0= negative)
      *  17 bits year*13+month  (year 0-9999, month 0-12)
@@ -771,7 +803,7 @@ public class JsonBinary {
      *   6 bits minute         (0-59)
      *   6 bits second         (0-59)
      * </pre>
-     *
+     * <p>
      * The sign bit is always 1. A value of 0 (negative) is reserved. The fractional part is typically dependent upon
      * the <i>fsp</i> (i.e., fractional seconds part) defined by a column, but in the case of JSON it is always 3 bytes.
      * Unlike the documentation, however, the 8 byte value is in <i>little-endian</i> form.
@@ -797,11 +829,12 @@ public class JsonBinary {
         int microSeconds = (int) (raw % (1 << 24));
         formatter.valueDatetime(year, month, day, hour, min, sec, microSeconds);
     }
+
     /**
      * Parse a {@code DECIMAL} value. The first two bytes are the precision and scale, followed by the binary
      * representation of the decimal itself.
      *
-     * @param length the length of the complete binary representation
+     * @param length    the length of the complete binary representation
      * @param formatter the formatter to be notified of the parsed value; may not be null
      * @throws IOException if there is a problem reading the JSON value
      */
@@ -814,13 +847,16 @@ public class JsonBinary {
         BigDecimal dec = AbstractRowsEventDataDeserializer.asBigDecimal(precision, scale, reader.read(decimalLength));
         formatter.value(dec);
     }
+
     protected void parseOpaqueValue(ColumnType type, int length, JsonFormatter formatter)
             throws IOException {
         formatter.valueOpaque(type, reader.read(length));
     }
+
     protected int readFractionalSecondsInMicroseconds() throws IOException {
         return (int) readBigEndianLong(3);
     }
+
     protected long readBigEndianLong(int numBytes) throws IOException {
         byte[] bytes = reader.read(numBytes);
         long result = 0;
@@ -830,6 +866,7 @@ public class JsonBinary {
         }
         return result;
     }
+
     protected int readUnsignedIndex(int maxValue, boolean isSmall, String desc) throws IOException {
         long result = isSmall ? readUInt16() : readUInt32();
         if (result > maxValue) {
@@ -841,22 +878,26 @@ public class JsonBinary {
         }
         return (int) result;
     }
+
     protected int readInt16() throws IOException {
         int b1 = reader.read() & 0xFF;
         int b2 = reader.read();
         return (short) (b2 << 8 | b1);
     }
+
     protected int readUInt16() throws IOException {
         int b1 = reader.read() & 0xFF;
         int b2 = reader.read() & 0xFF;
         return (b2 << 8 | b1) & 0xFFFF;
     }
+
     protected int readInt24() throws IOException {
         int b1 = reader.read() & 0xFF;
         int b2 = reader.read() & 0xFF;
         int b3 = reader.read();
         return b3 << 16 | b2 << 8 | b1;
     }
+
     protected int readInt32() throws IOException {
         int b1 = reader.read() & 0xFF;
         int b2 = reader.read() & 0xFF;
@@ -864,6 +905,7 @@ public class JsonBinary {
         int b4 = reader.read();
         return b4 << 24 | b3 << 16 | b2 << 8 | b1;
     }
+
     protected long readUInt32() throws IOException {
         int b1 = reader.read() & 0xFF;
         int b2 = reader.read() & 0xFF;
@@ -871,6 +913,7 @@ public class JsonBinary {
         int b4 = reader.read() & 0xFF;
         return (long) ((b4 << 24) | (b3 << 16) | (b2 << 8) | b1) & 0xFFFFFFFF;
     }
+
     protected long readInt64() throws IOException {
         int b1 = reader.read() & 0xFF;
         int b2 = reader.read() & 0xFF;
@@ -883,6 +926,7 @@ public class JsonBinary {
         return b8 << 56 | (b7 << 48) | (b6 << 40) | (b5 << 32) |
                 (b4 << 24) | (b3 << 16) | (b2 << 8) | b1;
     }
+
     protected BigInteger readUInt64() throws IOException {
         byte[] bigEndian = new byte[8];
         for (int i = 8; i != 0; --i) {
@@ -890,6 +934,7 @@ public class JsonBinary {
         }
         return new BigInteger(1, bigEndian);
     }
+
     /**
      * Read a variable-length integer value.
      * <p>
@@ -910,6 +955,7 @@ public class JsonBinary {
         }
         throw new IOException("Unexpected byte sequence (" + length + ")");
     }
+
     protected Boolean readLiteral() throws IOException {
         byte b = (byte) reader.read();
         if (b == 0x00) {
@@ -921,6 +967,7 @@ public class JsonBinary {
         }
         throw new IOException("Unexpected value '" + asHex(b) + "' for literal");
     }
+
     protected ValueType readValueType() throws IOException {
         byte b = (byte) reader.read();
         ValueType result = ValueType.byCode(b);
@@ -929,12 +976,7 @@ public class JsonBinary {
         }
         return result;
     }
-    protected static String asHex(byte b) {
-        return String.format("%02X ", b);
-    }
-    protected static String asHex(int value) {
-        return Integer.toHexString(value);
-    }
+
     /**
      * Class used internally to hold value entry information.
      */
@@ -943,14 +985,17 @@ public class JsonBinary {
         protected final int index;
         protected Object value;
         protected boolean resolved;
+
         public ValueEntry(ValueType type) {
             this.type = type;
             this.index = 0;
         }
+
         public ValueEntry(ValueType type, int index) {
             this.type = type;
             this.index = index;
         }
+
         public ValueEntry setValue(Object value) {
             this.value = value;
             this.resolved = true;

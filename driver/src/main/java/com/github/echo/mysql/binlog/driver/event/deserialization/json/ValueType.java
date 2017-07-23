@@ -17,12 +17,13 @@ package com.github.echo.mysql.binlog.driver.event.deserialization.json;
 
 import java.util.HashMap;
 import java.util.Map;
+
 /**
  * The set of values that can be used within a MySQL JSON value.
  * <p>
  * These values are defined in the MySQL codebase in the
  * <a href="https://github.com/mysql/mysql-server/blob/5.7/sql/json_binary.h">json_binary.h</a> file, and are:
- *
+ * <p>
  * <pre>
  *   type ::=
  *       0x00 |  // small JSON object
@@ -58,21 +59,26 @@ public enum ValueType {
     DOUBLE(0x0b),
     STRING(0x0c),
     CUSTOM(0x0f);
-    private final int code;
-    ValueType(int code) {
-        this.code = code;
-    }
-    public int getCode() {
-        return this.code;
-    }
     private static final Map<Integer, ValueType> TYPE_BY_CODE;
+
     static {
         TYPE_BY_CODE = new HashMap<Integer, ValueType>();
         for (ValueType type : values()) {
             TYPE_BY_CODE.put(type.code, type);
         }
     }
+
+    private final int code;
+
+    ValueType(int code) {
+        this.code = code;
+    }
+
     public static ValueType byCode(int code) {
         return TYPE_BY_CODE.get(code);
+    }
+
+    public int getCode() {
+        return this.code;
     }
 }

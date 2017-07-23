@@ -1,22 +1,8 @@
-/*
- * Copyright 2015 Stanley Shyiko
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.github.echo.mysql.binlog.driver.network.protocol.command;
 
 import com.github.echo.mysql.binlog.driver.GtidSet;
 import com.github.echo.mysql.binlog.driver.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.util.Collection;
 
@@ -25,12 +11,22 @@ public class DumpBinaryLogGtidCommand implements Command {
     private String binlogFilename;
     private long binlogPosition;
     private GtidSet gtidSet;
+
     public DumpBinaryLogGtidCommand(long serverId, String binlogFilename, long binlogPosition, GtidSet gtidSet) {
         this.serverId = serverId;
         this.binlogFilename = binlogFilename;
         this.binlogPosition = binlogPosition;
         this.gtidSet = gtidSet;
     }
+
+    private static byte[] hexToByteArray(String uuid) {
+        byte[] b = new byte[uuid.length() / 2];
+        for (int i = 0, j = 0; j < uuid.length(); j += 2) {
+            b[i++] = (byte) Integer.parseInt(uuid.charAt(j) + "" + uuid.charAt(j + 1), 16);
+        }
+        return b;
+    }
+
     @Override
     public byte[] toByteArray() throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -44,7 +40,7 @@ public class DumpBinaryLogGtidCommand implements Command {
         int dataSize = 8 /* number of uuidSets */;
         for (GtidSet.UUIDSet uuidSet : uuidSets) {
             dataSize += 16 /* uuid */ + 8 /* number of intervals */ +
-                uuidSet.getIntervals().size() /* number of intervals */ * 16 /* start-end */;
+                    uuidSet.getIntervals().size() /* number of intervals */ * 16 /* start-end */;
         }
         buffer.writeInteger(dataSize, 4);
         buffer.writeLong(uuidSets.size(), 8);
@@ -58,12 +54,5 @@ public class DumpBinaryLogGtidCommand implements Command {
             }
         }
         return buffer.toByteArray();
-    }
-    private static byte[] hexToByteArray(String uuid) {
-        byte[] b = new byte[uuid.length() / 2];
-        for (int i = 0, j = 0; j < uuid.length(); j += 2) {
-            b[i++] = (byte) Integer.parseInt(uuid.charAt(j) + "" + uuid.charAt(j + 1), 16);
-        }
-        return b;
     }
 }

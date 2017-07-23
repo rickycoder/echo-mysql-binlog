@@ -18,7 +18,6 @@ package com.github.echo.mysql.binlog.driver.network;
 /**
  * @see <a href="https://dev.mysql.com/doc/refman/5.7/en/secure-connection-options.html#option_general_ssl-mode>
  * ssl-mode</a> for the original documentation.
- *
  */
 public enum SSLMode {
     /**
